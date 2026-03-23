@@ -1824,6 +1824,10 @@ input[type=range]:active { cursor: grabbing; }
             <div><div class="toggle-label">Reduce outliers</div><div class="toggle-sub">Merge noise into nearest topic</div></div>
             <div class="toggle on" id="btOutliers" onclick="this.classList.toggle('on')"></div>
           </div>
+          <div class="cfg-subhead">🔬 Preprocessing</div>
+          <div class="config-label">Custom Stopwords</div>
+          <input type="text" id="btCustomStop" class="config-text-input" placeholder="e.g. company, report, said"/>
+          <div class="toggle-row"><div><div class="toggle-label">Lemmatization</div><div class="toggle-sub">running→run (reduces noise)</div></div><div class="toggle" id="btLemmatize" onclick="this.classList.toggle('on')"></div></div>
         </div>
 
         <!-- LDA -->
@@ -2485,6 +2489,8 @@ function buildForm(){
     fd.append('min_topic_size',document.getElementById('btMin').value);
     fd.append('language',document.getElementById('btLang').value);
     fd.append('reduce_outliers',document.getElementById('btOutliers').classList.contains('on'));
+    fd.append('custom_stopwords',document.getElementById('btCustomStop').value);
+    fd.append('lemmatize',document.getElementById('btLemmatize').classList.contains('on'));
   } else if(activeMethod==='lda'){
     fd.append('num_topics',document.getElementById('ldaTopicsVal').textContent);
     fd.append('max_features',document.getElementById('ldaFeatVal').textContent);
@@ -2930,6 +2936,25 @@ function renderCoherence(data){
     const pct=data.coherence_normalized[i]; const isOptimal=n===data.optimal_topics;
     const wrap=document.createElement('div'); wrap.className='chart-bar-wrap';
     wrap.title=`${n} topics: ${data.coherence_scores[i].toFixed(4)}`;
+    wrap.onclick=(function(topicCount){
+      return function(){
+        // Set LDA topic slider
+        const slider=document.querySelector('#cfg-lda input[type=range]');
+        if(slider){slider.value=topicCount;document.getElementById('ldaTopicsVal').textContent=topicCount;updateRange(slider);}
+        // Switch to LDA method panel if not already
+        const ldaCard=document.querySelector('[data-method="lda"]');
+        if(ldaCard && !ldaCard.classList.contains('active')){ldaCard.click();}
+        // Flash the slider label to confirm
+        const lbl=document.getElementById('ldaTopicsVal');
+        lbl.style.color='var(--accent2)';lbl.style.fontWeight='700';
+        setTimeout(()=>{lbl.style.color='';lbl.style.fontWeight='';},1200);
+        // Show toast
+        const toast=document.createElement('div');
+        toast.textContent=`✓ LDA topics set to ${topicCount}`;
+        toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent2);color:#0d1117;padding:8px 18px;border-radius:4px;font-family:var(--font-mono);font-size:12px;font-weight:600;z-index:9999;pointer-events:none;';
+        document.body.appendChild(toast);setTimeout(()=>toast.remove(),2000);
+      };
+    })(n);
     const bar=document.createElement('div'); bar.className='chart-bar'+(isOptimal?' optimal':'');
     bar.style.height=Math.max(pct/maxN*160,4)+'px';
     const label=document.createElement('div'); label.className='chart-label'+(isOptimal?' optimal':'');
