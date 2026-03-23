@@ -415,13 +415,16 @@ body::before {
 .api-bar input:focus { border-bottom-color: var(--accent2); }
 
 .api-status {
-  width: 8px; height: 8px;
+  width: 10px; height: 10px;
   border-radius: 50%;
-  background: var(--rule);
+  background: var(--muted);
   flex-shrink: 0;
+  transition: background .3s, box-shadow .3s;
 }
-.api-status.ok { background: var(--accent3); }
-.api-status.err { background: var(--accent); }
+.api-status.ok  { background: #3fb950; box-shadow: 0 0 7px rgba(63,185,80,0.8); }
+.api-status.err { background: #f78166; box-shadow: 0 0 6px rgba(247,129,102,0.6); }
+.api-status.pinging { background: #d29922; animation: dotPulse .8s ease-in-out infinite; }
+@keyframes dotPulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
 .api-test-btn {
   font-family: var(--font-mono);
@@ -2324,12 +2327,32 @@ function switchTab(tab,btn){
 // ── API ──
 function getApiUrl(){return document.getElementById('apiUrl').value.replace(/\/$/,'');}
 
-async function pingApi(){
-  const status=document.getElementById('apiStatus'); status.className='api-status';
-  try{
-    const res=await fetch(getApiUrl()+'/health',{signal:AbortSignal.timeout(90000),headers:{'ngrok-skip-browser-warning':'true','Accept':'application/json'}});
-    status.className=res.ok?'api-status ok':'api-status err';
-  }catch(e){status.className='api-status err';}
+async function pingApi() {
+  const status = document.getElementById('apiStatus');
+  const url    = getApiUrl();
+  const isRender = url.includes('onrender.com');
+
+  status.className = 'api-status pinging';
+
+  const maxTries = isRender ? 4 : 2;
+  for (let i = 0; i < maxTries; i++) {
+    try {
+      const res = await fetch(url + '/health', {
+        signal: AbortSignal.timeout(isRender ? 30000 : 12000),
+        headers: { 'ngrok-skip-browser-warning': 'true', 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        status.className = 'api-status ok';
+        return;
+      }
+    } catch(e) {
+      if (isRender && i < maxTries - 1) {
+        await new Promise(r => setTimeout(r, 8000));
+        continue;
+      }
+    }
+  }
+  status.className = 'api-status err';
 }
 
 // ── Progress ──
