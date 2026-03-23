@@ -1574,6 +1574,92 @@ select:focus { box-shadow: 2px 2px 0 var(--rule); }
 input[type=range] { cursor: grab; }
 input[type=range]:active { cursor: grabbing; }
 
+
+/* ── Auto Word Cloud Section ── */
+.wc-section {
+  margin-top: 40px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: none;
+}
+.wc-section.revealed {
+  animation: wcReveal .7s ease forwards;
+}
+@keyframes wcReveal {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.wc-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+  border-bottom: 1px solid var(--rule);
+}
+.wc-section-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 900;
+  font-style: italic;
+  color: var(--ink);
+}
+.wc-section-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-left: auto;
+}
+.wc-topic-block {
+  margin-bottom: 32px;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.wc-topic-block.visible {
+  animation: wcTopicIn .5s ease forwards;
+}
+@keyframes wcTopicIn {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.wc-topic-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+}
+.wc-topic-label {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  font-style: italic;
+}
+.wc-topic-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+.wc-cloud {
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  padding: 16px;
+  min-height: 160px;
+  position: relative;
+  overflow: hidden;
+}
+
+
+@keyframes wordPop {
+  from { opacity: 0; transform: rotate(var(--r, 0deg)) scale(0.4); }
+  to   { opacity: var(--op, 0.8); transform: rotate(var(--r, 0deg)) scale(1); }
+}
+
 </style>
 </head>
 <body>
@@ -1696,7 +1782,7 @@ input[type=range]:active { cursor: grabbing; }
           <div class="method-card" data-method="wordfreq">
             <div class="method-icon">☁️</div>
             <div class="method-name">Word Cloud</div>
-            <div class="method-desc">LDA-based topic word visualization</div>
+            <div class="method-desc">Auto-generated after LDA — or run standalone</div>
           </div>
           <div class="method-card" data-method="sentiment" style="grid-column:1/-1">
             <div class="method-icon">💬</div>
@@ -2380,7 +2466,7 @@ function stopProgress(){clearInterval(progressInterval);document.getElementById(
 function buildForm(){
   const fd=new FormData();
   if(activeMethod==='bertopic'){uploadedFiles.forEach(f=>fd.append('files',f));}
-  else if(activeMethod==='wordfreq'){if(uploadedFiles.length>0) fd.append('file',uploadedFiles[0]);}
+  else if(activeMethod==='wordfreq'){uploadedFiles.forEach(f=>fd.append('files',f));}
   else{uploadedFiles.forEach(f=>fd.append('files',f));}
   if(activeMethod==='bertopic'){
     fd.append('num_topics',document.getElementById('btTopics').value);
@@ -2443,6 +2529,8 @@ function renderTopics(data){
   let meta=`${data.num_topics} topics · ${data.num_docs} docs`;
   if(data.vocab_size) meta+=` · vocab: ${data.vocab_size}`;
   document.getElementById('resultsMeta').textContent=meta;
+
+  // ── Topic cards grid ──
   const grid=document.createElement('div'); grid.className='topic-grid';
   data.topics.forEach((t,i)=>{
     const card=document.createElement('div'); card.className='topic-card';
@@ -2453,6 +2541,164 @@ function renderTopics(data){
     grid.appendChild(card);
   });
   document.getElementById('tabSummary').appendChild(grid);
+
+  // ── Auto word clouds — only for LDA ──
+  if(data.method === 'lda') {
+    setTimeout(() => renderAutoWordClouds(data), 400);
+  }
+}
+
+function renderAutoWordClouds(data) {
+  const container = document.getElementById('tabSummary');
+
+  // Section wrapper with reveal animation
+  const section = document.createElement('div');
+  section.className = 'wc-section';
+  section.innerHTML = `
+    <div class="wc-section-header">
+      <div class="wc-section-title">☁ Topic Word Clouds</div>
+      <div class="wc-section-sub">Generated from LDA results · ${data.num_topics} topics</div>
+    </div>`;
+
+  const topicColors = [
+    ['#58a6ff','#3d8fe0','#82c4ff'],
+    ['#3fb950','#2d8a3a','#6dd98a'],
+    ['#f78166','#d4614d','#ffaa99'],
+    ['#d29922','#b07d10','#f0c050'],
+    ['#bc8cff','#9a6de0','#d4b0ff'],
+  ];
+
+  const maxWordsPerCloud = 20;
+
+  data.topics.forEach((topic, ti) => {
+    const colors = topicColors[ti % topicColors.length];
+    const topWords = topic.words.slice(0, maxWordsPerCloud);
+    const maxScore = topWords[0]?.score || 1;
+
+    const block = document.createElement('div');
+    block.className = 'wc-topic-block';
+    block.style.animationDelay = (ti * 0.15) + 's';
+
+    const header = document.createElement('div');
+    header.className = 'wc-topic-header';
+    header.innerHTML = `
+      <span class="wc-topic-label" style="color:${colors[0]}">Topic ${topic.topic_id}</span>
+      <span class="wc-topic-count">${topic.count} docs · ${topWords.length} words</span>`;
+
+    const cloud = document.createElement('div');
+    cloud.className = 'wc-cloud';
+
+    // Place words using spiral layout
+    const sorted = [...topWords].sort((a,b) => b.score - a.score);
+    sorted.forEach((item, i) => {
+      const rel = item.score / maxScore;
+      const fontSize = Math.round(11 + rel * 28);
+      const colorIdx = Math.floor(rel * (colors.length - 1));
+      const opacity = 0.5 + rel * 0.5;
+      const rotate = i % 5 === 0 ? -15 : i % 5 === 1 ? 0 : i % 5 === 2 ? 15 : i % 5 === 3 ? -8 : 8;
+      const isBold = rel > 0.5;
+
+      const el = document.createElement('span');
+      el.textContent = item.word;
+      el.title = `score: ${item.score.toFixed(4)}`;
+      el.style.cssText = `
+        font-family: var(--font-display);
+        font-size: ${fontSize}px;
+        font-weight: ${isBold ? 700 : 400};
+        font-style: ${rel > 0.7 ? 'italic' : 'normal'};
+        color: ${colors[colorIdx]};
+        opacity: 0;
+        position: absolute;
+        white-space: nowrap;
+        transform: rotate(${rotate}deg) scale(0.6);
+        cursor: default;
+        transition: opacity .3s, transform .3s, color .2s;
+        animation: wordPop ${0.3 + i * 0.04}s ease forwards;
+        animation-delay: ${ti * 0.15 + i * 0.04}s;`;
+
+      el.onmouseenter = () => {
+        el.style.color = colors[0];
+        el.style.transform = 'rotate(0deg) scale(1.15)';
+        el.style.zIndex = '10';
+        el.style.opacity = '1';
+      };
+      el.onmouseleave = () => {
+        el.style.color = colors[colorIdx];
+        el.style.transform = `rotate(${rotate}deg) scale(1)`;
+        el.style.zIndex = '';
+        el.style.opacity = opacity;
+      };
+
+      cloud.appendChild(el);
+    });
+
+    block.appendChild(header);
+    block.appendChild(cloud);
+    section.appendChild(block);
+  });
+
+  container.appendChild(section);
+
+  // Trigger reveal animation after DOM paint
+  requestAnimationFrame(() => {
+    section.classList.add('revealed');
+
+    // Place words using spiral collision detection per cloud
+    section.querySelectorAll('.wc-topic-block').forEach((block, ti) => {
+      const cloudEl = block.querySelector('.wc-cloud');
+      const words = Array.from(cloudEl.querySelectorAll('span'));
+
+      // Trigger block visibility staggered
+      setTimeout(() => {
+        block.classList.add('visible');
+
+        const W = cloudEl.offsetWidth || 600;
+        const H = Math.max(cloudEl.offsetHeight, 180);
+        const cx = W / 2, cy = H / 2;
+        const placed = [];
+
+        function overlaps(x, y, w, h) {
+          const pad = 6;
+          return placed.some(p =>
+            x < p.x + p.w + pad && x + w + pad > p.x &&
+            y < p.y + p.h + pad && y + h + pad > p.y
+          );
+        }
+
+        words.forEach((el, i) => {
+          const ew = el.offsetWidth || (el.textContent.length * (parseInt(el.style.fontSize) * 0.6));
+          const eh = el.offsetHeight || (parseInt(el.style.fontSize) * 1.4);
+          let placed_flag = false;
+
+          for (let r = 0; r < Math.max(W, H); r += 5) {
+            for (let angle = 0; angle < Math.PI * 2; angle += 0.28) {
+              const x = cx + r * Math.cos(angle + i * 0.5) - ew / 2;
+              const y = cy + r * Math.sin(angle + i * 0.5) - eh / 2;
+              if (x < 4 || y < 4 || x + ew > W - 4 || y + eh > H - 4) continue;
+              if (!overlaps(x, y, ew, eh)) {
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+                placed.push({ x, y, w: ew, h: eh });
+                placed_flag = true;
+                break;
+              }
+            }
+            if (placed_flag) break;
+          }
+          if (!placed_flag) {
+            el.style.left = (Math.random() * (W - 80)) + 'px';
+            el.style.top = (Math.random() * (H - 30)) + 'px';
+            placed.push({ x: parseFloat(el.style.left), y: parseFloat(el.style.top), w: ew, h: eh });
+          }
+        });
+
+        // Expand cloud height to fit all words
+        const maxBottom = Math.max(...placed.map(p => p.y + p.h)) + 24;
+        cloudEl.style.minHeight = Math.max(maxBottom, 160) + 'px';
+
+      }, ti * 150);
+    });
+  });
 }
 
 function renderTfidf(data){
@@ -2570,7 +2816,6 @@ async function runAnalysis(){
     if(activeMethod==='tfidf'&&document.getElementById('tfidfDistinct')&&document.getElementById('tfidfDistinct').classList.contains('on')) endpoint='tfidf_perdoc';
     if(activeMethod==='wordfreq') endpoint='lda';
     const formData=buildForm();
-    if(activeMethod==='wordfreq') uploadedFiles.forEach(f=>formData.append('files',f));
     const res=await fetch(`${getApiUrl()}/analyze/${endpoint}`,{method:'POST',body:formData,headers:{'ngrok-skip-browser-warning':'true'}});
     stopProgress();
     if(!res.ok){
