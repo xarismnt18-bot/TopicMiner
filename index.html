@@ -1583,11 +1583,11 @@ input[type=range]:active { cursor: grabbing; }
   transition: none;
 }
 .wc-section.revealed {
-  animation: wcReveal .7s ease forwards;
+  animation: wcReveal .9s cubic-bezier(0.22,1,0.36,1) forwards;
 }
 @keyframes wcReveal {
-  from { opacity:0; transform:translateY(24px); }
-  to   { opacity:1; transform:translateY(0); }
+  0%   { opacity:0; transform:translateY(32px) scale(0.98); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
 }
 .wc-section-header {
   display: flex;
@@ -1623,8 +1623,9 @@ input[type=range]:active { cursor: grabbing; }
   animation: wcTopicIn .5s ease forwards;
 }
 @keyframes wcTopicIn {
-  from { opacity:0; transform:translateY(16px); }
-  to   { opacity:1; transform:translateY(0); }
+  0%   { opacity:0; transform:translateY(20px) scale(0.97); }
+  70%  { opacity:1; transform:translateY(-3px) scale(1.005); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
 }
 .wc-topic-header {
   display: flex;
@@ -1652,12 +1653,23 @@ input[type=range]:active { cursor: grabbing; }
   min-height: 160px;
   position: relative;
   overflow: hidden;
+  transition: border-color .4s;
+}
+.wc-topic-block.visible .wc-cloud {
+  animation: cloudGlow 1.2s ease forwards;
+}
+@keyframes cloudGlow {
+  0%   { border-color: var(--rule); box-shadow: none; }
+  40%  { border-color: rgba(88,166,255,0.4); box-shadow: 0 0 20px rgba(88,166,255,0.08); }
+  100% { border-color: var(--rule); box-shadow: none; }
 }
 
 
 @keyframes wordPop {
-  from { opacity: 0; transform: rotate(var(--r, 0deg)) scale(0.4); }
-  to   { opacity: var(--op, 0.8); transform: rotate(var(--r, 0deg)) scale(1); }
+  0%   { opacity: 0; transform: rotate(var(--r,0deg)) scale(0) blur(8px); filter: blur(8px); }
+  60%  { opacity: 1; transform: rotate(var(--r,0deg)) scale(1.18) blur(0px); filter: blur(0); }
+  80%  { transform: rotate(var(--r,0deg)) scale(0.94); }
+  100% { opacity: 1; transform: rotate(var(--r,0deg)) scale(1); filter: blur(0); }
 }
 
 </style>
@@ -2601,6 +2613,10 @@ function renderAutoWordClouds(data) {
       const el = document.createElement('span');
       el.textContent = item.word;
       el.title = `score: ${item.score.toFixed(4)}`;
+      // Stagger: big words first (they're sorted by score), each 60ms apart
+      const staggerDelay = (ti * 0.2) + (i * 0.06);
+      const duration = 0.55 + (1 - rel) * 0.25; // big words: faster, small: slightly slower
+
       el.style.cssText = `
         font-family: var(--font-display);
         font-size: ${fontSize}px;
@@ -2610,11 +2626,12 @@ function renderAutoWordClouds(data) {
         opacity: 0;
         position: absolute;
         white-space: nowrap;
-        transform: rotate(${rotate}deg) scale(0.6);
+        transform: rotate(${rotate}deg) scale(0);
         cursor: default;
-        transition: opacity .3s, transform .3s, color .2s;
-        animation: wordPop ${0.3 + i * 0.04}s ease forwards;
-        animation-delay: ${ti * 0.15 + i * 0.04}s;`;
+        transition: color .2s, transform .15s;
+        animation: wordPop ${duration}s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        animation-delay: ${staggerDelay}s;
+        text-shadow: 0 0 20px ${colors[0]}44;`;
 
       el.onmouseenter = () => {
         el.style.color = colors[0];
