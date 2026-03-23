@@ -1790,8 +1790,8 @@ input[type=range]:active { cursor: grabbing; }
 
         <!-- Word Cloud -->
         <div id="cfg-wordfreq" style="display:none">
-          <div style="background:rgba(44,95,138,0.07);border:1px solid rgba(44,95,138,0.2);padding:10px 12px;margin-bottom:14px;font-family:var(--font-mono);font-size:11px;color:var(--accent2);line-height:1.5">
-            Word Cloud runs LDA internally and renders each topic's top words sized by weight.
+          <div style="background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.2);padding:10px 12px;margin-bottom:14px;font-family:var(--font-mono);font-size:11px;color:var(--accent);line-height:1.5">
+            ℹ Word Cloud uses your <strong>LDA configuration</strong> (stopwords, lemmatization, n-grams). Configure LDA first, then run Word Cloud for consistent results.
           </div>
           <div class="config-label">Number of Topics <span class="val" id="wfTopicsVal">3</span></div>
           <input type="range" min="2" max="15" value="3" oninput="document.getElementById('wfTopicsVal').textContent=this.value;updateRange(this)" id="wfTopics"/>
@@ -2414,18 +2414,22 @@ function buildForm(){
     fd.append('lemmatize',document.getElementById('tfidfLem').classList.contains('on'));
     fd.append('remove_numbers',document.getElementById('tfidfNums').classList.contains('on'));
   } else if(activeMethod==='wordfreq'){
+    // Use LDA config values so word cloud matches LDA results
     fd.append('num_topics',document.getElementById('wfTopicsVal').textContent);
-    fd.append('max_features',1000); fd.append('max_iter',20); fd.append('alpha','auto');
-    fd.append('learning_method','online'); fd.append('min_word_len',3);
-    const adaptiveMinDf=uploadedFiles.length>10?1:2;
-    const adaptiveMaxDf=uploadedFiles.length>50?0.98:0.90;
-    fd.append('min_df',adaptiveMinDf); fd.append('max_df',adaptiveMaxDf);
-    fd.append('ngram_min',1); fd.append('ngram_max',1);
-    fd.append('custom_stopwords',document.getElementById('wfCustomStop').value);
-    fd.append('remove_stopwords',document.getElementById('wfStop').classList.contains('on'));
-    fd.append('lemmatize',document.getElementById('wfLem').classList.contains('on'));
-    fd.append('stemming',false);
-    fd.append('remove_numbers',document.getElementById('wfNums').classList.contains('on'));
+    fd.append('max_features',document.getElementById('ldaFeatVal').textContent);
+    fd.append('max_iter',document.getElementById('ldaIterVal').textContent);
+    fd.append('alpha',document.getElementById('ldaAlpha').value);
+    fd.append('learning_method',document.getElementById('ldaLearn').value);
+    fd.append('min_word_len',document.getElementById('ldaMinLenVal').textContent);
+    fd.append('min_df',document.getElementById('ldaMinDfVal').textContent);
+    fd.append('max_df',(parseInt(document.getElementById('ldaMaxDfVal').textContent)/100).toFixed(2));
+    const ng=document.getElementById('ldaNgram').value.split(',');
+    fd.append('ngram_min',ng[0]); fd.append('ngram_max',ng[1]);
+    fd.append('custom_stopwords',document.getElementById('ldaCustomStop').value);
+    fd.append('remove_stopwords',document.getElementById('ldaStopwords').classList.contains('on'));
+    fd.append('lemmatize',document.getElementById('ldaLemmatize').classList.contains('on'));
+    fd.append('stemming',document.getElementById('ldaStemming').classList.contains('on'));
+    fd.append('remove_numbers',document.getElementById('ldaNumbers').classList.contains('on'));
   } else if(activeMethod==='sentiment'){
     fd.append('model',document.getElementById('sentModel').value);
     fd.append('per_sentence',document.getElementById('sentPer').classList.contains('on'));
@@ -2465,9 +2469,14 @@ function renderTfidf(data){
 }
 
 function renderWordfreq(data){
+  // Safety: ensure data has topics array with words
+  if(!data.topics || !data.topics.length){
+    document.getElementById('tabSummary').innerHTML='<p style="color:var(--muted);font-family:var(--font-mono);font-size:12px;padding:20px">No topics found. Try reducing Min Doc Frequency or uploading more documents.</p>';
+    return;
+  }
   const maxWords=parseInt(document.getElementById('wfWordsVal')?.textContent||15);
   document.getElementById('resultsTitle').textContent='LDA Topic Word Clouds';
-  document.getElementById('resultsMeta').textContent=`${data.num_topics} topics · ${data.num_docs} docs`;
+  document.getElementById('resultsMeta').textContent=`${data.num_topics} topics · ${data.num_docs} docs · vocab: ${data.vocab_size||''}`;
   const topicColors=[['#1a6b3a','#2d8a52','#4aaa70'],['#c0392b','#e05a4e','#a02820'],['#2c5f8a','#4a7faa','#1a4060'],['#b8860b','#d4a020','#8a6208'],['#6b3a7a','#8a5a9a','#4a1a5a']];
   const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:24px;';
   data.topics.forEach((topic,ti)=>{
@@ -2600,8 +2609,14 @@ window.addEventListener('load',()=>{pingApi();setInterval(pingApi,4*60*1000);});
 async function runCoherence(){
   if(!uploadedFiles.length){showError('Please upload a file first.');return;}
   hideError();
+
+  // Warn if using Render — coherence needs gensim which may not be installed
+  const url = getApiUrl();
+  const isRender = url.includes('onrender.com');
+
   const btn=document.getElementById('cohBtn');
-  btn.disabled=true; btn.textContent='⏳ Calculating...';
+  btn.disabled=true;
+  btn.textContent = isRender ? '⏳ Calculating (may take 2-3 min on Render)...' : '⏳ Calculating...';
   const minT=parseInt(document.getElementById('cohMin').value);
   const maxT=parseInt(document.getElementById('cohMax').value);
   const fd=new FormData();
@@ -2620,8 +2635,19 @@ async function runCoherence(){
   fd.append('ngram_min',ng[0]); fd.append('ngram_max',ng[1]);
   fd.append('custom_stopwords',document.getElementById('ldaCustomStop').value);
   try{
-    const res=await fetch(`${getApiUrl()}/analyze/coherence`,{method:'POST',body:fd,headers:{'ngrok-skip-browser-warning':'true'}});
-    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.detail||'Error');}
+    const res=await fetch(`${getApiUrl()}/analyze/coherence`,{
+      method:'POST', body:fd,
+      headers:{'ngrok-skip-browser-warning':'true'},
+      signal: AbortSignal.timeout(300000)  // 5 min timeout for coherence
+    });
+    if(!res.ok){
+      const e=await res.json().catch(()=>({}));
+      const msg = e.detail || 'Error';
+      if(msg.includes('gensim') || msg.includes('ModuleNotFound')) {
+        throw new Error('Coherence requires gensim. Add gensim to requirements.txt on Render, or use the Colab backend.');
+      }
+      throw new Error(msg);
+    }
     const data=await res.json();
     renderCoherence(data);
   }catch(e){showError('Coherence analysis failed: '+e.message);}
