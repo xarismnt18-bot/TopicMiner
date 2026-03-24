@@ -2920,15 +2920,31 @@ async function runAnalysis(){
       if(typeof detail==='object') detail=JSON.stringify(detail);
       throw new Error(detail);
     }
-    const data=await res.json();
-    document.getElementById('progressWrap').classList.remove('visible');
-    const rp=document.getElementById('resultsPanel'); rp.classList.add('visible');
-    document.getElementById('tabSummary').innerHTML='';
-    document.getElementById('rawData').textContent=JSON.stringify(data,null,2);
-    document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===0));
-    document.getElementById('tabSummary').style.display='';
-    document.getElementById('tabRaw').style.display='none';
-    renderers[activeMethod](data);
+    const data = await res.json();
+document.getElementById('progressWrap').classList.remove('visible');
+
+const rp = document.getElementById('resultsPanel');
+rp.classList.add('visible');
+
+document.getElementById('tabSummary').innerHTML = '';
+document.getElementById('rawData').textContent = JSON.stringify(data, null, 2);
+document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+document.getElementById('tabSummary').style.display = '';
+document.getElementById('tabRaw').style.display = 'none';
+
+renderers[activeMethod](data);
+
+// stop miner first
+stopMinerAnimation();
+
+// then jump to results
+setTimeout(() => {
+  rp.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}, 300);
+    
   }catch(e){
     stopProgress();
     document.getElementById('progressWrap').classList.remove('visible');
@@ -2937,7 +2953,6 @@ async function runAnalysis(){
     stopMinerAnimation();
   }finally{
     document.getElementById('runBtn').disabled=false;
-    stopMinerAnimation();
   }
 }
 
