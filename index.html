@@ -1728,7 +1728,7 @@ input[type=range]:active { cursor: grabbing; }
 <div class="shell">
 
   <!-- Masthead -->
-  <div class="masthead">
+  <div class="masthead" id="minerSection">
     <div class="masthead-title-wrap">
   <div class="logo">Topic<span>Miner</span></div>
   <img src="./assets/Miner_Digs_for_words.png" alt="miner" class="miner-img" id="minerImg">
@@ -2903,6 +2903,10 @@ async function runAnalysis(){
   startProgress(activeMethod);
   try{
     triggerMinerAnimation(activeMethod);
+    document.getElementById("minerSection").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+});
     let endpoint=activeMethod;
     if(activeMethod==='tfidf'&&document.getElementById('tfidfDistinct')&&document.getElementById('tfidfDistinct').classList.contains('on')) endpoint='tfidf_perdoc';
     if(activeMethod==='wordfreq') endpoint='lda';
