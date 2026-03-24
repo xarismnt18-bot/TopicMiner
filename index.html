@@ -484,17 +484,47 @@ body::before {
 .api-test-btn:hover { border-color: var(--accent2); color: var(--accent2); }
 
 /* ── Colab note ── */
-.colab-note {
-  background: rgba(88,166,255,0.06);
-  border: 1px solid rgba(88,166,255,0.15);
-  border-left: 3px solid var(--accent);
-  padding: 10px 14px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--accent);
-  margin-bottom: 32px;
-  line-height: 1.5;
+
+/* ── Advanced toggle row ── */
+.advanced-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
 }
+
+.advanced-toggle-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+  border-radius: 2px;
+}
+.advanced-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+.advanced-toggle-btn.open  { border-color: var(--accent2); color: var(--accent2); }
+
+.api-status-inline {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.api-status-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .05em;
+  transition: color .3s;
+}
+.api-status.ok  ~ * .api-status-text,
+.api-status-text.ok  { color: var(--accent2); }
+.api-status-text.err { color: var(--accent3); }
 
 /* ── Hero ── */
 .hero {
@@ -1756,17 +1786,23 @@ input[type=range]:active { cursor: grabbing; }
     <div class="explainer-inner" id="explainerInner"></div>
   </div>
 
-  <!-- API Bar -->
-  <div class="api-bar">
+  <!-- Advanced toggle row -->
+  <div class="advanced-toggle-row">
+    <button class="advanced-toggle-btn" id="advancedToggle" onclick="toggleAdvanced()">&#9881; Advanced</button>
+    <div class="api-status-inline">
+      <div class="api-status" id="apiStatus"></div>
+      <span class="api-status-text" id="apiStatusText">checking&hellip;</span>
+    </div>
+  </div>
+
+  <!-- API Bar (hidden by default) -->
+  <div class="api-bar" id="apiBar" style="display:none; margin-bottom:12px;">
     <label>Backend URL</label>
     <input type="text" id="apiUrl" value="https://textmine-backend.onrender.com" placeholder="Paste your Colab or Render URL" oninput="localStorage.setItem('textmine_api_url', this.value)"/>
-    <div class="api-status" id="apiStatus"></div>
     <button class="api-test-btn" onclick="pingApi()">Test Connection</button>
   </div>
 
-  <div class="colab-note">
-    ℹ For real BERTopic with BERT embeddings, run <strong>TextMine_Colab.ipynb</strong> in Google Colab and paste the ngrok URL above. For all other methods, the Render URL works fine.
-  </div>
+  <span id="autoSwitchLabel" style="display:none"></span>
 
   <!-- Hero -->
   <div class="hero">
@@ -2463,6 +2499,30 @@ dropZone.addEventListener('drop', e=>{
   uploadedFiles=[...uploadedFiles,...newFiles]; renderFiles();
 });
 
+// ── URL Presets ──
+const PRESET_URLS = {
+  colab:  'https://nonbilabiate-nondialectal-denis.ngrok-free.dev',
+  render: 'https://textmine-backend.onrender.com'
+};
+
+// Methods that need Colab/GPU
+const COLAB_METHODS = new Set(['bertopic', 'tfidf']);
+function needsColab(method) {
+  if (COLAB_METHODS.has(method)) return true;
+  if (method === 'sentiment') {
+    return document.getElementById('sentModel')?.value === 'roberta';
+  }
+  return false;
+}
+
+function autoSwitchUrl() {
+  const target = needsColab(activeMethod) ? 'colab' : 'render';
+  const input = document.getElementById('apiUrl');
+  input.value = PRESET_URLS[target];
+  localStorage.setItem('textmine_api_url', input.value);
+  pingApi();
+}
+
 // ── Methods ──
 document.querySelectorAll('.method-card').forEach(card => {
   card.addEventListener('click', () => {
@@ -2492,15 +2552,25 @@ function switchTab(tab,btn){
   document.getElementById('tabRaw').style.display=tab==='raw'?'':'none';
 }
 
+function toggleAdvanced() {
+  const bar = document.getElementById('apiBar');
+  const btn = document.getElementById('advancedToggle');
+  const open = bar.style.display === 'none';
+  bar.style.display = open ? 'flex' : 'none';
+  btn.classList.toggle('open', open);
+}
+
 // ── API ──
 function getApiUrl(){return document.getElementById('apiUrl').value.replace(/\/$/,'');}
 
 async function pingApi() {
   const status = document.getElementById('apiStatus');
+  const txt    = document.getElementById('apiStatusText');
   const url    = getApiUrl();
   const isRender = url.includes('onrender.com');
 
   status.className = 'api-status pinging';
+  if (txt) { txt.textContent = 'connecting…'; txt.className = 'api-status-text'; }
 
   const maxTries = isRender ? 4 : 2;
   for (let i = 0; i < maxTries; i++) {
@@ -2511,6 +2581,7 @@ async function pingApi() {
       });
       if (res.ok) {
         status.className = 'api-status ok';
+        if (txt) { txt.textContent = 'connected'; txt.className = 'api-status-text ok'; }
         return;
       }
     } catch(e) {
@@ -2521,6 +2592,7 @@ async function pingApi() {
     }
   }
   status.className = 'api-status err';
+  if (txt) { txt.textContent = 'unreachable'; txt.className = 'api-status-text err'; }
 }
 
 // ── Progress ──
@@ -2885,6 +2957,7 @@ const renderers={bertopic:renderTopics,lda:renderTopics,tfidf:renderTfidf,wordfr
 
 // ── Run Analysis ──
 async function runAnalysis(){
+  autoSwitchUrl(); // silently set correct URL before running
   if(!uploadedFiles.length){showError('Please upload at least one file.');return;}
   if(activeMethod==='bertopic'){
     const url=getApiUrl();
