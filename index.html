@@ -1434,8 +1434,8 @@ select:focus { border-color: var(--ink); }
 /* ── References Section ── */
 .refs-section {
   border-top: 1px solid var(--rule);
-  padding: 36px 0;
-  margin-top: 40px;
+  padding: 0;
+  margin-top: 0;
 }
 
 .refs-grid {
@@ -1483,7 +1483,7 @@ select:focus { border-color: var(--ink); }
 /* ── Glossary ── */
 .glossary-section {
   border-top: 1px solid var(--rule);
-  padding: 32px 0;
+  padding: 0;
 }
 
 .glossary-grid {
@@ -1519,10 +1519,11 @@ select:focus { border-color: var(--ink); }
   .howto-grid { grid-template-columns: 1fr 1fr; }
   .refs-grid { grid-template-columns: 1fr; }
   .glossary-grid { grid-template-columns: 1fr 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Collapsible Sections ── */
-.collapsible-section { cursor: default; }
+.collapsible-section { cursor: default; margin-top: 6px; }
 .collapsible-trigger {
   display: flex;
   align-items: baseline;
@@ -1563,7 +1564,7 @@ select:focus { border-color: var(--ink); }
   overflow: hidden;
   transition: max-height .5s ease;
 }
-.collapsible-body.open { max-height: 2000px; }
+.collapsible-body.open { max-height: 4000px; }
 
 /* ── Export & Copy ── */
 .results-toolbar {
@@ -1689,11 +1690,50 @@ select:focus { border-color: var(--ink); }
   gap: 10px;
 }
 
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .footer-copy {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--muted);
   letter-spacing: .08em;
+}
+
+.footer-author {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .06em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-name {
+  color: var(--ink2);
+  font-weight: 600;
+}
+
+.footer-linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: .08em;
+  border: 1px solid rgba(88,166,255,0.25);
+  padding: 2px 8px;
+  border-radius: 2px;
+  transition: all .2s;
+}
+.footer-linkedin:hover {
+  background: rgba(88,166,255,0.08);
+  border-color: var(--accent);
 }
 
 .footer-methods {
@@ -1710,7 +1750,260 @@ select:focus { border-color: var(--ink); }
   color: var(--muted);
 }
 
-/* ── Responsive ── */
+/* ── About section ── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 40px;
+}
+
+.about-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-block-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.about-block p {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink2);
+}
+.about-block p strong { color: var(--ink); }
+
+.about-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0;
+  margin: 0;
+}
+.about-list li {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink2);
+  padding-left: 14px;
+  position: relative;
+}
+.about-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+.about-list li strong { color: var(--ink); }
+
+.about-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.about-tech {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  background: var(--surface);
+  border-radius: 2px;
+}
+
+/* ── Download All TXT button ── */
+.download-all-btn {
+  width: 100%;
+  padding: 8px 14px;
+  background: none;
+  border: 1px solid rgba(88,166,255,0.3);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .2s;
+  border-radius: 2px;
+}
+.download-all-btn:hover {
+  background: rgba(88,166,255,0.08);
+  border-color: var(--accent);
+}
+
+/* ── FAQ ── */
+.faq-list { display: flex; flex-direction: column; gap: 0; }
+
+.faq-item {
+  border-bottom: 1px solid var(--rule);
+}
+.faq-item:first-child { border-top: 1px solid var(--rule); }
+
+.faq-q {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 4px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  gap: 12px;
+  transition: color .2s;
+  user-select: none;
+}
+.faq-q:hover { color: var(--accent); }
+.faq-q:hover .faq-arrow { color: var(--accent); }
+
+.faq-arrow {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform .25s, color .2s;
+  line-height: 1;
+}
+.faq-item.open .faq-arrow { transform: rotate(45deg); color: var(--accent); }
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease, padding .3s ease;
+  padding: 0 4px;
+}
+.faq-item.open .faq-a {
+  max-height: 400px;
+  padding: 0 4px 16px;
+}
+.faq-a p {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink2);
+  margin-bottom: 8px;
+}
+.faq-a p:last-child { margin-bottom: 0; }
+.faq-a strong { color: var(--ink); }
+
+/* ── Privacy Notice ── */
+.privacy-notice {
+  margin-top: 40px;
+  background: rgba(63,185,80,0.04);
+  border: 1px solid rgba(63,185,80,0.15);
+  border-left: 3px solid var(--accent2);
+  padding: 18px 22px;
+}
+
+.privacy-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.privacy-icon { font-size: 15px; }
+
+.privacy-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent2);
+}
+
+.privacy-body p {
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--ink2);
+  margin-bottom: 8px;
+}
+.privacy-body p:last-child { margin-bottom: 0; }
+.privacy-body strong { color: var(--ink); }
+
+/* ── Print styles — only show results panel ── */
+@media print {
+  /* Hide absolutely everything */
+  body * { visibility: hidden; }
+
+  /* Show only the results panel and its children */
+  #resultsPanel,
+  #resultsPanel * { visibility: visible; }
+
+  /* Position results panel to fill the page */
+  #resultsPanel {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px 32px !important;
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide toolbar buttons inside results */
+  .results-toolbar,
+  .toolbar-btn,
+  .export-menu-item,
+  #exportDropdown,
+  .copy-word-btn,
+  .tab { display: none !important; }
+
+  /* Force light background on topic cards */
+  .topic-card {
+    background: #f9f9f9 !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+
+  .topic-word {
+    background: #eee !important;
+    color: #111 !important;
+    border-color: #ccc !important;
+  }
+
+  .topic-word.w1 {
+    background: #333 !important;
+    color: #fff !important;
+  }
+
+  /* TF-IDF bars */
+  .tfidf-bar { background: #555 !important; }
+
+  /* Sentiment table */
+  .sent-table td, .sent-table th { color: #111 !important; border-color: #ccc !important; }
+  .sent-pill { border: 1px solid #ccc !important; background: #f5f5f5 !important; }
+  .sent-pill-pct { color: #111 !important; }
+
+  /* Word clouds — keep visible but simple */
+  .wc-cloud { border: 1px solid #ccc !important; background: #fafafa !important; }
+
+  /* Results header */
+  .results-title { color: #111 !important; }
+  .results-meta  { color: #555 !important; }
+
+  /* Page setup */
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+}
 @media (max-width: 820px) {
   .hero { grid-template-columns: 1fr; }
   .hero-main { padding: 24px 0; border-right: none; border-bottom: 1px solid var(--rule); }
@@ -1970,6 +2263,9 @@ input[type=range]:active { cursor: grabbing; }
           </div>
         </div>
         <div class="file-list" id="fileList"></div>
+        <div id="downloadAllWrap" style="display:none; margin-top:8px;">
+          <button class="download-all-btn" onclick="downloadAllTxt()">⬇ Download All as TXT</button>
+        </div>
       </div>
 
       <!-- Methods -->
@@ -2241,6 +2537,9 @@ input[type=range]:active { cursor: grabbing; }
     </div>
   </div>
 
+  <!-- Collapsible block: References, Glossary, FAQ, About -->
+  <div style="margin-top:48px;">
+
   <!-- References -->
   <div class="refs-section collapsible-section">
     <div class="section-head" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">
@@ -2394,9 +2693,201 @@ input[type=range]:active { cursor: grabbing; }
     </div>
   </div>
 
+  <!-- FAQ & Privacy -->
+  <div class="collapsible-section">
+    <div class="section-head" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">
+      <div class="collapsible-trigger" onclick="toggleSection(this,'faqBody')" style="width:100%;border-bottom:2px solid var(--ink);padding-bottom:12px;">
+        <h2>FAQ &amp; Privacy</h2>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span class="section-head-tag" style="margin-left:0">Common questions · Data notice</span>
+          <div class="collapsible-arrow">Show</div>
+        </div>
+      </div>
+    </div>
+    <div class="collapsible-body" id="faqBody">
+      <div style="height:20px"></div>
+
+      <!-- FAQ -->
+      <div class="section-head" style="border-bottom:1px solid var(--rule);margin-bottom:0;">
+        <h2 style="font-size:15px;color:var(--ink2)">Frequently Asked Questions</h2>
+      </div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Why do I get 0 topics or very few topics from BERTopic?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p>This almost always means <strong>min_topic_size is too large</strong> relative to your corpus. HDBSCAN requires at least min_topic_size documents to form a cluster — if your corpus has 50 documents and min_topic_size is 20, only themes with 20+ documents will appear as topics; everything else becomes outlier noise (-1). Try reducing min_topic_size to 5–10 for small corpora. Also check that your ngrok/Colab URL is active — a disconnected backend will return an empty response silently.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>What is the difference between BERTopic and LDA?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p><strong>BERTopic</strong> uses deep neural embeddings (BERT) to understand the meaning of words in context. It is more accurate, especially for complex or ambiguous language, but requires a GPU and significant computation time. It works best on corpora of 500+ documents.</p>
+            <p><strong>LDA</strong> treats each document as a bag of words — word order and context are ignored. It is much faster, runs on any machine, and works well on corpora as small as 50 documents. For most research use cases, LDA is the practical starting point and BERTopic is used to validate or deepen the findings.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>How many documents do I need for good results?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p>It depends on the method. <strong>LDA</strong> works from around 50 documents, though 200+ produces more stable results. <strong>BERTopic</strong> needs at least 100–200 documents and performs best above 500. <strong>TF-IDF</strong> and <strong>Sentiment Analysis</strong> work on any number of documents — even a single file. <strong>Word Cloud</strong> follows LDA's requirements since it runs LDA internally. As a general rule: more documents → more reliable topics.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Why do my topics all contain the same words?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p>This is the most common preprocessing problem. Domain-specific high-frequency words pass through the stopword filter because they are not in the standard English stopword list. The fix is to add these words to the <strong>Custom Stopwords</strong> field (comma-separated) and rerun. Also try enabling <strong>Lemmatization</strong> and lowering <strong>Max Doc Frequency</strong> to automatically exclude corpus-wide terms.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>How do I choose the right number of topics (K) for LDA?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p>Use the <strong>Coherence Score</strong> tool — it automatically tests a range of K values and identifies the one producing the most semantically coherent topics. As a starting heuristic, try K ≈ √(N/2) where N is the number of documents (e.g. 200 documents → start around K = 10). Always inspect the actual topic words after selecting K — a coherence-optimal K that produces uninterpretable topics is less useful than a slightly lower K with clearer themes.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Why does VADER give wrong sentiment scores on my texts?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p>VADER was designed for social media and informal English. It struggles with <strong>sarcasm</strong>, <strong>formal academic writing</strong>, <strong>domain-specific language</strong>, and <strong>non-English text</strong>. If your corpus uses specialised vocabulary or implied sentiment, switch to <strong>RoBERTa</strong> (requires Colab). For non-English text, neither model will perform reliably.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>What file formats are supported and which is fastest?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p><strong>TXT</strong> is fastest — plain text requires no parsing. <strong>XLSX</strong> is medium speed. <strong>PDF</strong> is slowest — the binary structure is parsed page by page, and scanned/image-based PDFs return empty text. Use the <strong>⚡ to TXT</strong> button next to any uploaded PDF to convert it client-side before running analysis.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Why is the Colab backend showing as unreachable?</span>
+            <span class="faq-arrow">+</span>
+          </div>
+          <div class="faq-a">
+            <p>ngrok URLs are <strong>session-based</strong> — they expire when the Colab runtime is idle or restarted. Each time you rerun the notebook, a new URL is generated. Click <strong>⚙ Advanced</strong>, paste the new URL from your Colab output, and click Test Connection. The Render backend for LDA/VADER is always-on but may take 30–60 seconds to wake from idle.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Privacy Notice -->
+      <div class="privacy-notice" style="margin-top:32px;">
+        <div class="privacy-header">
+          <span class="privacy-icon">🔒</span>
+          <span class="privacy-title">Privacy &amp; Data Notice</span>
+        </div>
+        <div class="privacy-body">
+          <p><strong>Your files never leave your session.</strong> All documents you upload are sent directly to the analysis backend solely for processing. No file content is stored, logged, or retained after the analysis completes. Results exist only in your browser and are discarded when you close or refresh the page.</p>
+          <p><strong>No personal data is collected.</strong> TopicMiner does not use cookies, does not track usage, and does not store any identifying information. There is no account system and no database. Each session is completely stateless.</p>
+          <p><strong>Colab backend:</strong> When using BERTopic via Google Colab, your documents are processed on a Google-provided virtual machine that you control. The Colab session and all its data are deleted when the runtime is terminated.</p>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+    </div><!-- end collapsible-body -->
+  </div>
+
+  <!-- About -->
+  <div class="collapsible-section">
+    <div class="section-head" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">
+      <div class="collapsible-trigger" onclick="toggleSection(this,'aboutBody')" style="width:100%;border-bottom:2px solid var(--ink);padding-bottom:12px;">
+        <h2>About TopicMiner</h2>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span class="section-head-tag" style="margin-left:0">Research platform · Open tool</span>
+          <div class="collapsible-arrow">Show</div>
+        </div>
+      </div>
+    </div>
+    <div class="collapsible-body" id="aboutBody">
+      <div style="height:24px"></div>
+      <div class="about-grid">
+
+        <div class="about-block">
+          <div class="about-block-label">What is TopicMiner?</div>
+          <p>TopicMiner is a free, open-access NLP research platform built for academics, students, and researchers who need to extract structure and meaning from text corpora without requiring programming knowledge. It brings together five state-of-the-art analysis methods — BERTopic, LDA, TF-IDF, Word Cloud, and Sentiment Analysis — in a single unified interface, each grounded in peer-reviewed research and implemented according to best practices from the computational linguistics literature.</p>
+          <p>Unlike commercial tools such as MonkeyLearn, IBM Watson, or Google Cloud NLP, TopicMiner is entirely free, requires no API keys or subscriptions, and is designed specifically for academic and research use cases rather than business analytics. Every result is explainable and traceable back to the underlying model parameters.</p>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-label">Who is it for?</div>
+          <p>TopicMiner is designed for <strong>researchers and graduate students</strong> in linguistics, social sciences, education, communication, and any field that involves qualitative text analysis. It is particularly suited for thesis and dissertation work, where systematic, reproducible, and methodologically grounded text analysis is required but computational resources and programming expertise may be limited.</p>
+          <p>It is also useful for <strong>educators</strong> teaching NLP concepts, as the explainer panels provide academic citations and plain-language explanations of each method alongside the live analysis tool.</p>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-label">What makes it different?</div>
+          <ul class="about-list">
+            <li><strong>Research-grade methods</strong> — BERTopic with real BERT embeddings via GPU, not simplified approximations</li>
+            <li><strong>Academic citations</strong> — every method, parameter, and recommendation is grounded in peer-reviewed literature</li>
+            <li><strong>No code required</strong> — full NLP pipeline accessible through a clean web interface</li>
+            <li><strong>Transparent preprocessing</strong> — lemmatization, stopwords, n-grams, and all parameters are fully configurable and documented</li>
+            <li><strong>Completely free</strong> — no account, no subscription, no data collection</li>
+            <li><strong>Open architecture</strong> — built on FastAPI, scikit-learn, BERTopic, and Gensim; fully inspectable and extensible</li>
+          </ul>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-label">Built by</div>
+          <p><strong>Charalampos Mentsios</strong> — developed TopicMiner as a research tool to support NLP-based text analysis in academic settings. The platform was built from the ground up using FastAPI for the backend, deployed on Google Colab (GPU) and Render, with a custom HTML/CSS/JS frontend designed for clarity and usability in research contexts.</p>
+          <p>Feedback, suggestions, and collaboration inquiries are welcome via
+            <a href="https://www.linkedin.com/in/charalampos-mentsios" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(88,166,255,0.3);">LinkedIn</a>.
+          </p>
+          <div class="about-stack">
+            <span class="about-tech">FastAPI</span>
+            <span class="about-tech">BERTopic</span>
+            <span class="about-tech">scikit-learn</span>
+            <span class="about-tech">Gensim</span>
+            <span class="about-tech">NLTK</span>
+            <span class="about-tech">Render</span>
+            <span class="about-tech">Google Colab</span>
+            <span class="about-tech">PDF.js</span>
+          </div>
+        </div>
+
+      </div>
+      <div style="height:24px"></div>
+    </div><!-- end collapsible-body -->
+  </div>
+
+  </div><!-- end collapsible block wrapper -->
+
   <!-- Footer -->
   <div class="footer">
-    <div class="footer-copy">TopicMiner NLP Platform · Open Research Tool · v2.0</div>
+    <div class="footer-left">
+      <div class="footer-copy">TopicMiner NLP Platform · Open Research Tool · v2.0</div>
+      <div class="footer-author">
+        Built by <span class="footer-name">Charalampos Mentsios</span>
+        <a class="footer-linkedin" href="https://www.linkedin.com/in/charalampos-mentsios" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn
+        </a>
+      </div>
+    </div>
     <div class="footer-methods">
       <span class="footer-method">BERTopic</span>
       <span class="footer-method">LDA</span>
@@ -2405,7 +2896,6 @@ input[type=range]:active { cursor: grabbing; }
       <span class="footer-method">RoBERTa</span>
       <span class="footer-method">Gensim</span>
     </div>
-    </div><!-- end collapsible-body -->
   </div>
 
 </div>
@@ -2614,7 +3104,6 @@ function renderFiles() {
     const size = f.size < 1024*1024 ? (f.size/1024).toFixed(1)+'KB' : (f.size/1024/1024).toFixed(1)+'MB';
     const el = document.createElement('div'); el.className='file-item';
 
-    // Show convert button for PDFs, or download button if already converted
     let actionBtn = '';
     if (convertedFiles[i]) {
       actionBtn = `<button class="file-convert done" onclick="downloadTxt(${i})" title="Download converted TXT">⬇ download</button>`;
@@ -2625,6 +3114,11 @@ function renderFiles() {
     el.innerHTML=`<span class="file-icon">${iconMap[ext]||'📄'}</span><span class="file-name">${f.name}</span><span class="file-size">${size}</span>${actionBtn}<button class="file-remove" onclick="removeFile(${i})">✕</button>`;
     fl.appendChild(el);
   });
+
+  // Show "Download All as TXT" only if there are any converted files
+  const hasConverted = Object.keys(convertedFiles).length > 0;
+  const wrap = document.getElementById('downloadAllWrap');
+  if (wrap) wrap.style.display = hasConverted ? 'block' : 'none';
 }
 function removeFile(i) {
   delete convertedFiles[i];
@@ -2640,6 +3134,22 @@ function downloadTxt(i) {
   a.download = f.name;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function downloadAllTxt() {
+  const files = Object.values(convertedFiles);
+  if (!files.length) return;
+  // Download each with a small delay so browser doesn't block multiple downloads
+  files.forEach((f, i) => {
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(f);
+      a.download = f.name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, i * 300);
+  });
+  showToast(`⬇ Downloading ${files.length} TXT file${files.length > 1 ? 's' : ''}…`);
 }
 
 // ── PDF → TXT conversion (client-side via PDF.js) ──
@@ -2825,6 +3335,15 @@ function updateMtsAdvisor() {
 
 // Call advisor on page load and whenever files change
 document.addEventListener('DOMContentLoaded', updateMtsAdvisor);
+
+// ── FAQ ──────────────────────────────────────────────────────────────────────
+function toggleFaq(qEl) {
+  const item = qEl.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
 const PRESET_URLS = {
   colab:  'https://nonbilabiate-nondialectal-denis.ngrok-free.dev',
   render: 'https://textmine-backend.onrender.com'
@@ -3739,8 +4258,45 @@ function exportTXT() {
 
 function exportPDF() {
   document.getElementById('exportMenu').classList.remove('open');
+
+  // Inject a print-only header into the results panel
+  const rp = document.getElementById('resultsPanel');
+  if (!rp) { window.print(); return; }
+
+  // Remove any existing print header
+  const existing = document.getElementById('printHeader');
+  if (existing) existing.remove();
+
+  const method = lastResultData ? lastResultData.method.toUpperCase() : '';
+  const header = document.createElement('div');
+  header.id = 'printHeader';
+  header.style.cssText = 'display:none;';
+  header.innerHTML = `
+    <div style="border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:20px;">
+      <div style="font-family:Georgia,serif;font-size:22pt;font-weight:900;color:#111;">TopicMiner</div>
+      <div style="font-family:monospace;font-size:9pt;color:#555;letter-spacing:.15em;text-transform:uppercase;margin-top:3px;">
+        ${method} Results · ${new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}
+      </div>
+    </div>`;
+  rp.insertBefore(header, rp.firstChild);
+
+  // Show header only during print
+  const style = document.createElement('style');
+  style.id = 'printHeaderStyle';
+  style.textContent = '@media print { #printHeader { display:block !important; } }';
+  document.head.appendChild(style);
+
   showToast('Opening print dialog…', 1500);
-  setTimeout(() => window.print(), 600);
+  setTimeout(() => {
+    window.print();
+    // Clean up after print dialog closes
+    setTimeout(() => {
+      const h = document.getElementById('printHeader');
+      const s = document.getElementById('printHeaderStyle');
+      if (h) h.remove();
+      if (s) s.remove();
+    }, 2000);
+  }, 400);
 }
 
 // ── Copy buttons ──
