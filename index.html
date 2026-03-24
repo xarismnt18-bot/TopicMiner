@@ -2254,28 +2254,6 @@ input[type=range]:active { cursor: grabbing; }
     {cx: 0.85, cy: 0.65, color: [188,140,255],  label: 'Coherence'},
   ];
 
-  function triggerMinerAnimation(method) {
-  const miner = document.getElementById('minerImg');
-  if (!miner) return;
-
-  miner.classList.remove('dig-bertopic', 'dig-lda');
-
-  // force reflow so animation can replay every click
-  void miner.offsetWidth;
-
-  if (method === 'bertopic') {
-    miner.classList.add('dig-bertopic');
-  } else if (method === 'lda') {
-    miner.classList.add('dig-lda');
-  }
-}
-
-function stopMinerAnimation() {
-  const miner = document.getElementById('minerImg');
-  if (!miner) return;
-  miner.classList.remove('dig-bertopic', 'dig-lda');
-}
-  
   function resize() {
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
@@ -2425,6 +2403,26 @@ function stopMinerAnimation() {
   draw();
 })();
 
+function triggerMinerAnimation(method) {
+  const miner = document.getElementById('minerImg');
+  if (!miner) return;
+
+  miner.classList.remove('dig-bertopic', 'dig-lda');
+  void miner.offsetWidth;
+
+  if (method === 'bertopic') {
+    miner.classList.add('dig-bertopic');
+  } else if (method === 'lda') {
+    miner.classList.add('dig-lda');
+  }
+}
+
+function stopMinerAnimation() {
+  const miner = document.getElementById('minerImg');
+  if (!miner) return;
+  miner.classList.remove('dig-bertopic', 'dig-lda');
+}
+  
 // ── State ──────────────────────────────────────────────────────────────────
 let uploadedFiles = [];
 let activeMethod = 'bertopic';
