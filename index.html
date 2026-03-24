@@ -2939,11 +2939,14 @@ stopMinerAnimation();
 
 // then jump to results
 setTimeout(() => {
-  rp.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-}, 300);
+  const resultsTitle = document.getElementById('resultsTitle');
+  if (resultsTitle) {
+    resultsTitle.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
+}, 400);
     
   }catch(e){
     stopProgress();
