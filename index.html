@@ -47,6 +47,21 @@ body {
   pointer-events: none;
 }
 
+  
+.masthead-title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.miner-img {
+  width: 140px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 20px #ffaa00);
+}
 /* ── Research bg placeholder (canvas handles it) ── */
 .research-bg { display: none; }
 
@@ -1686,7 +1701,10 @@ input[type=range]:active { cursor: grabbing; }
 
   <!-- Masthead -->
   <div class="masthead">
-    <div class="logo">Topic<span>Miner</span></div>
+    <div class="masthead-title-wrap">
+  <div class="logo">Topic<span>Miner</span></div>
+  <img src="./assets/Miner_Digs_for_words.png" alt="miner" class="miner-img">
+</div>
     <div class="masthead-sub">Topic Modeling · Sentiment Analysis · Text Mining · NLP</div>
     <div class="masthead-rule"></div>
   </div>
