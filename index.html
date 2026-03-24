@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>TopicMiner — NLP Text Analysis Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root {
   --bg: #0d1117;
@@ -485,7 +486,78 @@ body::before {
 
 /* ── Colab note ── */
 
-/* ── Advanced toggle row ── */
+/* ── Min Topic Size Advisor ── */
+.mts-advisor {
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  padding: 12px 14px;
+  margin-bottom: 4px;
+  transition: border-color .3s;
+}
+.mts-advisor.warn  { border-left-color: var(--gold); }
+.mts-advisor.bad   { border-left-color: var(--accent3); }
+.mts-advisor.good  { border-left-color: var(--accent2); }
+
+.mts-advisor-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+.mts-advisor-icon { font-size: 14px; }
+.mts-advisor-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.mts-behavior {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+.mts-rec {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--ink2);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.mts-presets { border-top: 1px solid var(--rule); padding-top: 9px; }
+.mts-preset-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 7px;
+}
+.mts-preset-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.mts-preset-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .2s;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.mts-preset-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,0.06); }
+.mts-preset-btn.active { border-color: var(--accent2); color: var(--accent2); background: rgba(63,185,80,0.08); }
+.mts-preset-btn span { font-size: 8px; color: var(--muted); font-weight: 400; letter-spacing: .05em; }
 .advanced-toggle-row {
   display: flex;
   align-items: center;
@@ -728,7 +800,27 @@ h1 em {
 .file-name { flex: 1; font-family: var(--font-mono); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .file-size { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
 .file-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; transition: color .2s; }
-.file-remove:hover { color: var(--accent); }
+.file-remove:hover { color: var(--accent3); }
+
+.file-convert {
+  background: none;
+  border: 1px solid rgba(88,166,255,0.3);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.file-convert:hover { background: rgba(88,166,255,0.1); border-color: var(--accent); }
+.file-convert:disabled { opacity: .4; cursor: not-allowed; }
+.file-convert.converting { color: var(--gold); border-color: var(--gold); animation: dotPulse .8s infinite; }
+.file-convert.done { color: var(--accent2); border-color: var(--accent2); }
 
 /* ── Methods ── */
 .methods { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1109,6 +1201,35 @@ select:focus { border-color: var(--ink); }
 }
 .config-text-input:focus { border-bottom-color: var(--ink); }
 
+/* ── Explainer pitfalls block ── */
+.explainer-pitfalls {
+  grid-column: 1 / -1;
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: rgba(247,129,102,0.06);
+  border: 1px solid rgba(247,129,102,0.18);
+  border-left: 3px solid var(--accent3);
+}
+.explainer-pitfalls-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent3);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.explainer-pitfalls p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink2);
+  margin-bottom: 6px;
+}
+.explainer-pitfalls p:last-child { margin-bottom: 0; }
+.explainer-pitfalls strong { color: var(--accent3); font-weight: 600; }
+
 /* ── Method Explainer Panel ── */
 .explainer-panel {
   border: 1px solid var(--rule);
@@ -1120,7 +1241,7 @@ select:focus { border-color: var(--ink); }
   margin-bottom: 0;
 }
 .explainer-panel.open {
-  max-height: 700px;
+  max-height: 1400px;
   margin-bottom: 32px;
 }
 .explainer-inner { padding: 28px 32px; }
@@ -1899,8 +2020,23 @@ input[type=range]:active { cursor: grabbing; }
           <div class="config-label">Number of Topics <span class="val" id="btTopicsVal">10</span></div>
           <input type="range" id="btTopics" min="2" max="50" value="10" oninput="document.getElementById('btTopicsVal').textContent=this.value;updateRange(this)"/>
           <div class="config-label">Min Topic Size <span class="val" id="btMinVal">5</span></div>
-          <input type="range" id="btMin" min="2" max="100" value="5" oninput="document.getElementById('btMinVal').textContent=this.value;updateRange(this)"/>
-          <div class="config-label">Language</div>
+          <input type="range" id="btMin" min="2" max="100" value="5" oninput="document.getElementById('btMinVal').textContent=this.value;updateRange(this);updateMtsAdvisor()"/>
+
+          <!-- Min Topic Size Advisor -->
+          <div class="mts-advisor" id="mtsAdvisor">
+            <div class="mts-advisor-header">
+              <span class="mts-advisor-icon" id="mtsIcon">💡</span>
+              <span class="mts-advisor-title" id="mtsTitle">Min Topic Size Advisor</span>
+            </div>
+            <div class="mts-behavior" id="mtsBehavior"></div>
+            <div class="mts-rec" id="mtsRec"></div>
+            <div class="mts-presets">
+              <span class="mts-preset-label">Suggestions for your corpus:</span>
+              <div class="mts-preset-row" id="mtsPresets"></div>
+            </div>
+          </div>
+
+          <div class="config-label" style="margin-top:14px">Language</div>
           <select id="btLang"><option value="english">English</option><option value="spanish">Spanish</option><option value="french">French</option><option value="portuguese">Portuguese</option><option value="multilingual">Multilingual</option></select>
           <div class="toggle-row">
             <div><div class="toggle-label">Reduce outliers</div><div class="toggle-sub">Merge noise into nearest topic</div></div>
@@ -2477,11 +2613,101 @@ function renderFiles() {
     const ext = f.name.split('.').pop().toLowerCase();
     const size = f.size < 1024*1024 ? (f.size/1024).toFixed(1)+'KB' : (f.size/1024/1024).toFixed(1)+'MB';
     const el = document.createElement('div'); el.className='file-item';
-    el.innerHTML=`<span class="file-icon">${iconMap[ext]||'📄'}</span><span class="file-name">${f.name}</span><span class="file-size">${size}</span><button class="file-remove" onclick="removeFile(${i})">✕</button>`;
+
+    // Show convert button for PDFs, or download button if already converted
+    let actionBtn = '';
+    if (convertedFiles[i]) {
+      actionBtn = `<button class="file-convert done" onclick="downloadTxt(${i})" title="Download converted TXT">⬇ download</button>`;
+    } else if (ext === 'pdf') {
+      actionBtn = `<button class="file-convert" id="conv-${i}" onclick="convertPdfToTxt(${i})" title="Convert to TXT for faster analysis">⚡ to TXT</button>`;
+    }
+
+    el.innerHTML=`<span class="file-icon">${iconMap[ext]||'📄'}</span><span class="file-name">${f.name}</span><span class="file-size">${size}</span>${actionBtn}<button class="file-remove" onclick="removeFile(${i})">✕</button>`;
     fl.appendChild(el);
   });
 }
-function removeFile(i) { uploadedFiles.splice(i,1); renderFiles(); }
+function removeFile(i) {
+  delete convertedFiles[i];
+  uploadedFiles.splice(i,1);
+  renderFiles();
+  updateMtsAdvisor();
+}
+function downloadTxt(i) {
+  const f = convertedFiles[i];
+  if (!f) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(f);
+  a.download = f.name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ── PDF → TXT conversion (client-side via PDF.js) ──
+const convertedFiles = {}; // idx → txtFile, persists across re-renders
+
+async function convertPdfToTxt(idx) {
+  const file = uploadedFiles[idx];
+  const btn = document.getElementById('conv-'+idx);
+  if (!btn) return;
+
+  btn.disabled = true;
+  btn.classList.add('converting');
+  btn.textContent = '⏳ converting…';
+
+  try {
+    // Set PDF.js worker
+    if (typeof pdfjsLib === 'undefined') throw new Error('PDF.js not loaded');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+    let fullText = '';
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(item => item.str).join(' ');
+      fullText += pageText + '\n\n';
+    }
+
+    if (!fullText.trim()) throw new Error('No text found — PDF may be scanned/image-based');
+
+    // Create a new .txt File object
+    const txtName = file.name.replace(/\.pdf$/i, '.txt');
+    const txtFile = new File([fullText], txtName, { type: 'text/plain' });
+
+    // Replace the PDF in uploadedFiles with the TXT
+    uploadedFiles[idx] = txtFile;
+    convertedFiles[idx] = txtFile; // remember for re-renders
+
+    btn.classList.remove('converting');
+    btn.classList.add('done');
+    btn.textContent = '✓ converted';
+    btn.disabled = true;
+
+    // Insert a download button right after the convert button
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'file-convert done';
+    dlBtn.textContent = '⬇ download';
+    dlBtn.title = 'Download converted TXT file';
+    dlBtn.onclick = () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(txtFile);
+      a.download = txtName;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+    btn.insertAdjacentElement('afterend', dlBtn);
+
+    showToast(`✓ ${file.name} → ${txtName}`);
+
+  } catch(e) {
+    btn.classList.remove('converting');
+    btn.textContent = '⚡ to TXT';
+    btn.disabled = false;
+    showToast('⚠ ' + (e.message || 'Conversion failed'));
+  }
+}
 
 fileInput.addEventListener('change', e => {
   const existing = new Set(uploadedFiles.map(f=>f.name+f.size));
@@ -2489,6 +2715,7 @@ fileInput.addEventListener('change', e => {
   uploadedFiles = [...uploadedFiles, ...newFiles];
   if (newFiles.length < e.target.files.length) showError((e.target.files.length-newFiles.length)+' duplicate(s) skipped.');
   renderFiles();
+  updateMtsAdvisor();
 });
 dropZone.addEventListener('dragover', e=>{e.preventDefault();dropZone.classList.add('drag');});
 dropZone.addEventListener('dragleave', ()=>dropZone.classList.remove('drag'));
@@ -2496,10 +2723,108 @@ dropZone.addEventListener('drop', e=>{
   e.preventDefault(); dropZone.classList.remove('drag');
   const existing = new Set(uploadedFiles.map(f=>f.name+f.size));
   const newFiles = [...e.dataTransfer.files].filter(f=>!existing.has(f.name+f.size));
-  uploadedFiles=[...uploadedFiles,...newFiles]; renderFiles();
+  uploadedFiles=[...uploadedFiles,...newFiles]; renderFiles(); updateMtsAdvisor();
 });
 
-// ── URL Presets ──
+// ── Min Topic Size Advisor ────────────────────────────────────────────────────
+function updateMtsAdvisor() {
+  const advisor  = document.getElementById('mtsAdvisor');
+  const icon     = document.getElementById('mtsIcon');
+  const title    = document.getElementById('mtsTitle');
+  const behavior = document.getElementById('mtsBehavior');
+  const rec      = document.getElementById('mtsRec');
+  const presets  = document.getElementById('mtsPresets');
+  if (!advisor) return;
+
+  const mts   = parseInt(document.getElementById('btMin').value) || 5;
+  const nDocs = uploadedFiles.length;
+
+  // ── Compute suggested values based on doc count ──
+  // Rule of thumb: ~2–5% of docs, with sensible floor/ceiling
+  const micro    = Math.max(2,  Math.round(nDocs * 0.02));
+  const balanced = Math.max(5,  Math.round(nDocs * 0.05));
+  const broad    = Math.max(10, Math.round(nDocs * 0.10));
+
+  // ── Describe current behavior ──
+  let iconStr, behaviorText, recText, stateClass;
+
+  if (mts <= 3) {
+    iconStr      = '🔬';
+    behaviorText = 'Detects micro-topics (noise risk)';
+    recText      = 'Clusters form from just ' + mts + ' documents — HDBSCAN will pick up very specific but potentially meaningless patterns. Expect many noisy or one-off topics mixed in with real ones. Only use this on very large, diverse corpora.';
+    stateClass   = 'warn';
+  } else if (mts <= 8) {
+    iconStr      = '⚖️';
+    behaviorText = 'Semi-stable topics';
+    recText      = 'Topics need at least ' + mts + ' documents to form — a reasonable starting point that captures specific themes without too much noise. Good for medium-sized corpora where you want detailed, specific topics.';
+    stateClass   = 'good';
+  } else if (mts <= 15) {
+    iconStr      = '✅';
+    behaviorText = 'Optimal — stable, meaningful topics';
+    recText      = 'The sweet spot. Topics require solid document support to emerge, filtering out noise while preserving real thematic clusters. Recommended for most corpora.';
+    stateClass   = 'good';
+  } else if (mts <= 19) {
+    iconStr      = '📚';
+    behaviorText = 'Broad topics only';
+    recText      = 'Only dominant, well-represented themes will surface. Smaller or niche topics will be absorbed into the outlier (-1) group. Use this when you specifically want high-level themes.';
+    stateClass   = nDocs > 0 && mts > nDocs * 0.3 ? 'warn' : '';
+  } else {
+    iconStr      = '🚨';
+    behaviorText = 'Too aggressive — most docs become outliers';
+    recText      = 'Min topic size of ' + mts + ' is very high. Unless your corpus has hundreds of documents per theme, HDBSCAN will reject most clusters and dump them into noise. Lower this to get meaningful results.';
+    stateClass   = 'bad';
+  }
+
+  // ── Corpus-aware warning overlay ──
+  if (nDocs === 0) {
+    recText = 'Upload files first and this panel will give you personalised suggestions based on your corpus size.';
+    stateClass = '';
+  } else if (mts >= nDocs * 0.5) {
+    iconStr      = '🚨';
+    behaviorText = 'Too large for your corpus';
+    recText      = 'Min topic size of ' + mts + ' is ≥ 50% of your ' + nDocs + ' document(s). HDBSCAN will likely produce 0–1 topics. Reduce it significantly.';
+    stateClass   = 'bad';
+  }
+
+  // ── Render ──
+  advisor.className = 'mts-advisor' + (stateClass ? ' ' + stateClass : '');
+  icon.textContent  = iconStr;
+  behavior.textContent = behaviorText;
+  rec.textContent   = recText;
+
+  // ── Preset buttons ──
+  presets.innerHTML = '';
+  const suggestions = nDocs > 0
+    ? [
+        { val: micro,        label: 'Micro',       sub: 'noise risk' },
+        { val: balanced,     label: 'Semi-stable',  sub: 'detailed' },
+        { val: broad,        label: 'Optimal',      sub: 'recommended' },
+        { val: Math.max(20, Math.round(nDocs * 0.20)), label: 'Aggressive', sub: 'broad only' },
+      ]
+    : [
+        { val: 3,  label: 'Micro',       sub: 'noise risk' },
+        { val: 8,  label: 'Semi-stable', sub: 'detailed' },
+        { val: 15, label: 'Optimal',     sub: 'recommended' },
+        { val: 20, label: 'Aggressive',  sub: 'broad only' },
+      ];
+
+  suggestions.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'mts-preset-btn' + (s.val === mts ? ' active' : '');
+    btn.innerHTML = s.val + '<span>' + s.label + ' · ' + s.sub + '</span>';
+    btn.onclick = () => {
+      const slider = document.getElementById('btMin');
+      slider.value = s.val;
+      document.getElementById('btMinVal').textContent = s.val;
+      updateRange(slider);
+      updateMtsAdvisor();
+    };
+    presets.appendChild(btn);
+  });
+}
+
+// Call advisor on page load and whenever files change
+document.addEventListener('DOMContentLoaded', updateMtsAdvisor);
 const PRESET_URLS = {
   colab:  'https://nonbilabiate-nondialectal-denis.ngrok-free.dev',
   render: 'https://textmine-backend.onrender.com'
@@ -3154,7 +3479,11 @@ const EXPLAINERS = {
     col2: `
       <p><strong>When to use:</strong> BERTopic excels on larger corpora of 500 or more documents where semantic relationships matter. It handles polysemy correctly — the word "bank" will be assigned to the right context (financial vs. river bank) based on surrounding words. It is particularly effective for scientific abstracts, news articles, and social media corpora.</p>
       <p><strong>Key parameters:</strong> The <em>nr_topics</em> parameter sets a target number of topics; setting it to "auto" lets HDBSCAN decide organically. The <em>min_topic_size</em> controls the minimum number of documents a cluster must contain before it is recognized as a topic — smaller values find more fine-grained topics but risk noise. The <em>reduce_outliers</em> option reassigns the -1 noise cluster (documents HDBSCAN could not place) to the nearest topic by cosine similarity.</p>
-      <p><strong>Limitation:</strong> Generating BERT embeddings requires significant computational resources. Grootendorst (2022) recommends GPU acceleration, which is why the Google Colab backend with T4 GPU is necessary for this method. Processing 1,000 documents typically takes 30–120 seconds depending on hardware.</p>`
+      <p><strong>Limitation:</strong> Generating BERT embeddings requires significant computational resources. Grootendorst (2022) recommends GPU acceleration, which is why the Google Colab backend with T4 GPU is necessary for this method. Processing 1,000 documents typically takes 30–120 seconds depending on hardware.</p>`,
+    pitfalls: `
+      <p><strong>Very short documents degrade quality.</strong> BERT embeddings rely on sufficient context to capture meaning. Grootendorst (2022) notes that documents shorter than 10–15 words — such as isolated tweets or single-sentence fragments — do not provide enough context for the transformer to produce meaningful representations. If your corpus consists of very short texts, concatenate related documents or use LDA instead.</p>
+      <p><strong>High outlier (-1) counts signal a min_topic_size that is too large.</strong> If more than 20–30% of your documents land in the noise topic, reduce min_topic_size. Conversely, if you see dozens of near-identical micro-topics, increase it. The Reduce Outliers option can help reassign noise documents after clustering.</p>
+      <p><strong>Non-English corpora need the multilingual model.</strong> The default all-MiniLM-L6-v2 embedding model is English-optimized. Running it on Greek, Spanish, or other languages will produce poor semantic groupings. Always select the matching language option or use Multilingual for mixed-language corpora.</p>`
   },
   lda: {
     title: 'Latent Dirichlet Allocation',
@@ -3167,7 +3496,11 @@ const EXPLAINERS = {
     col2: `
       <p><strong>When to use:</strong> LDA is the standard choice for corpora of 50 to 10,000 documents where computational efficiency is important and GPU resources are unavailable. It is fully interpretable, well-studied, and supported by an extensive body of research on evaluation and preprocessing best practices.</p>
       <p><strong>Preprocessing recommendations from the literature:</strong> Blei et al. (2003) recommend removing high-frequency function words (stopwords) before modeling. Schofield & Mimno (2016) demonstrated in a large empirical study that lemmatization consistently improves topic coherence by 8–12%, while stemming — despite reducing vocabulary size — often <em>reduces</em> coherence because it conflates morphologically distinct but semantically different word forms. Both Schofield & Mimno (2016) and Boyd-Graber et al. (2017) advise against stemming for human-interpretable topic models.</p>
-      <p><strong>The α hyperparameter</strong> controls document-topic sparsity. Low α values (below 0.1) produce documents concentrated on very few topics. High α values (above 1.0) produce flat, uniform topic distributions. The "auto" setting uses empirical Bayes estimation and is recommended by Wallach et al. (2009) as the most robust default.</p>`
+      <p><strong>The α hyperparameter</strong> controls document-topic sparsity. Low α values (below 0.1) produce documents concentrated on very few topics. High α values (above 1.0) produce flat, uniform topic distributions. The "auto" setting uses empirical Bayes estimation and is recommended by Wallach et al. (2009) as the most robust default.</p>`,
+    pitfalls: `
+      <p><strong>Choosing K: use the coherence tool, not guesswork.</strong> Griffiths & Steyvers (2004) provide a useful starting heuristic — try K ≈ √(N/2) where N is the number of documents — but always validate with coherence scores. If the optimal K lands at the boundary of your tested range (e.g. the highest K you tested), extend the range further; you may not have found the true peak yet.</p>
+      <p><strong>Top words that look identical across topics</strong> indicate your max_df is too high (overly common words pass through) or your corpus needs domain-specific stopwords. Add the repeated words to Custom Stopwords and rerun.</p>
+      <p><strong>Empty or near-empty topics</strong> (1–2 documents) mean min_df is too low or K is too high for your corpus size. Increase min_df or reduce K.</p>`
   },
   tfidf: {
     title: 'TF-IDF',
@@ -3181,7 +3514,11 @@ const EXPLAINERS = {
       <p><strong>When to use:</strong> TF-IDF is ideal for keyword extraction and identifying the most representative terms across a corpus. Unlike LDA it does not model latent thematic structure — it ranks terms by statistical importance, making it complementary to topic modeling rather than a replacement.</p>
       <p><strong>Sublinear TF scaling:</strong> TopicMiner applies sublinear term frequency scaling, replacing raw counts with their logarithm. Manning et al. (2008) show that raw TF overpowers IDF for high-frequency terms, and that logarithmic scaling produces more balanced, interpretable rankings by compressing the dynamic range of term frequencies.</p>
       <p><strong>Distinctive Mode</strong> addresses a known problem with standard TF-IDF on small or homogeneous corpora where many terms receive the maximum possible score. This mode applies an additional penalty proportional to a term's document frequency — terms that appear in many documents are down-weighted even if their per-document score is high. This rewards terms that are both important within a document and distinctive across the corpus.</p>
-      <p><strong>N-grams:</strong> Extending to bigrams (n=2) captures meaningful multi-word expressions. Manning et al. (2008) note that phrase-level indexing substantially improves precision for domain-specific corpora where compound terms such as "machine learning" or "climate change" carry meaning that unigram analysis would fragment.</p>`
+      <p><strong>N-grams:</strong> Extending to bigrams (n=2) captures meaningful multi-word expressions. Manning et al. (2008) note that phrase-level indexing substantially improves precision for domain-specific corpora where compound terms such as "machine learning" or "climate change" carry meaning that unigram analysis would fragment.</p>`,
+    pitfalls: `
+      <p><strong>All top terms are domain-wide words</strong> (e.g. "university", "student", "program" appearing in every document of an academic corpus) — this means max_df is too high. Lower it to 0.7–0.8 to exclude terms that appear in more than 70–80% of documents. Alternatively, add these terms directly to Custom Stopwords.</p>
+      <p><strong>Results look sparse or nearly empty</strong> — min_df is too strict. If you have a small corpus (under 30 documents), set min_df to 1 so that terms appearing in even a single document are considered.</p>
+      <p><strong>TF-IDF is not a topic model.</strong> It ranks terms by statistical distinctiveness but does not group them into themes. If your goal is to understand what subjects your corpus covers rather than which terms are most important, use LDA or BERTopic instead. TF-IDF and topic modeling are complementary — run both for the fullest picture.</p>`
   },
   wordcloud: {
     title: 'Word Cloud Visualization',
@@ -3194,7 +3531,11 @@ const EXPLAINERS = {
     col2: `
       <p><strong>Interpreting the clouds:</strong> Each cloud represents one latent topic discovered by LDA. The largest, most centrally placed words are the topic's core defining terms. Smaller peripheral words are present in the topic but with lower probability. When two clouds share large words — particularly generic ones like "good", "bad", or domain terms — this is a signal that your corpus requires additional domain-specific stopwords or that the number of topics should be increased.</p>
       <p><strong>Recommended settings based on the literature:</strong> Schofield & Mimno (2016) recommend enabling lemmatization for word cloud visualization specifically, because uninflected base forms are more readable than stemmed variants. Boyd-Graber et al. (2017) advise adding corpus-specific stopwords iteratively — run once, identify the most generic high-frequency terms, add them as custom stopwords, and rerun. Typically two to three such iterations produce significantly cleaner topic representations.</p>
-      <p><strong>Limitation:</strong> Word clouds are qualitative tools. They communicate thematic structure intuitively but do not quantify topic quality. Always validate word cloud results with the Coherence Score calculator, which provides a statistically grounded measure of topic interpretability.</p>`
+      <p><strong>Limitation:</strong> Word clouds are qualitative tools. They communicate thematic structure intuitively but do not quantify topic quality. Always validate word cloud results with the Coherence Score calculator, which provides a statistically grounded measure of topic interpretability.</p>`,
+    pitfalls: `
+      <p><strong>Clouds that look almost identical</strong> are the most common signal of a problem. When two or more clouds share the same large central words, it means either K is too high (topics are being artificially split) or domain stopwords are missing. Add the shared words to Custom Stopwords and rerun, or reduce K by 2–3.</p>
+      <p><strong>One enormous cloud and several tiny ones</strong> indicates an imbalanced corpus — one theme dominates the documents. This is not an error; it reflects your data. Consider filtering or balancing your corpus if you want equal representation across themes.</p>
+      <p><strong>Words are cut off or overlapping in the cloud.</strong> This is a layout issue caused by very long words or a large number of words per topic. Reduce the Words per Cloud slider or increase min_word_len to filter out short tokens that inflate the word count.</p>`
   },
   sentiment: {
     title: 'Sentiment Analysis',
@@ -3207,7 +3548,11 @@ const EXPLAINERS = {
     col2: `
       <p>RoBERTa (Liu et al., 2019) is a transformer language model trained on 160GB of text data using an optimized BERT pretraining procedure. The specific model used in TopicMiner — cardiffnlp/twitter-roberta-base-sentiment — was fine-tuned on approximately 124 million tweets by Barbieri et al. (2020) as part of the TweetEval benchmark, making it particularly well-suited for short, informal, and expressive text.</p>
       <p>Barbieri et al. (2020) demonstrated that this model substantially outperforms rule-based approaches including VADER on ambiguous, ironic, and context-dependent text. The model processes text as a sequence of subword tokens and applies multi-head self-attention to model long-range contextual dependencies, enabling it to correctly classify sentences where the sentiment is expressed implicitly or through figurative language.</p>
-      <p><strong>When to choose which model:</strong> Hutto & Gilbert (2014) note that VADER was designed for texts where sentiment is expressed explicitly and directly. For corpora with complex language, sarcasm, negation across clause boundaries, or domain-specific sentiment vocabulary, RoBERTa consistently produces higher accuracy at the cost of requiring GPU acceleration. VADER processes approximately 10,000 sentences per second; RoBERTa processes approximately 200 per second on GPU.</p>`
+      <p><strong>When to choose which model:</strong> Hutto & Gilbert (2014) note that VADER was designed for texts where sentiment is expressed explicitly and directly. For corpora with complex language, sarcasm, negation across clause boundaries, or domain-specific sentiment vocabulary, RoBERTa consistently produces higher accuracy at the cost of requiring GPU acceleration. VADER processes approximately 10,000 sentences per second; RoBERTa processes approximately 200 per second on GPU.</p>`,
+    pitfalls: `
+      <p><strong>VADER struggles with sarcasm, irony, and domain slang.</strong> Because VADER is lexicon-based, it cannot detect sentiment that contradicts the literal word meanings. "This is just great" said sarcastically scores as positive. Similarly, domain-specific terms like "sick" (meaning excellent), "wicked" (meaning impressive), or field-specific negative terms will be misclassified. For such corpora, switch to RoBERTa.</p>
+      <p><strong>Very long documents give misleading averages.</strong> TopicMiner scores sentiment at the sentence level and averages across the document. A report that is mostly neutral with one strongly negative conclusion will show a near-neutral average score. Review the sentence-level table to identify where sentiment concentrates rather than relying solely on the summary percentages.</p>
+      <p><strong>Academic, legal, or technical language confuses both models.</strong> Formal writing tends to score as neutral even when the content carries implicit negative or positive judgment. Neither VADER nor the RoBERTa model was trained on such text. Interpret results from formal corpora with caution and treat the compound scores as indicative rather than definitive.</p>`
   },
   coherence: {
     title: 'Topic Coherence Analysis',
@@ -3220,7 +3565,11 @@ const EXPLAINERS = {
     col2: `
       <p><strong>How to read the chart:</strong> The bar chart displays coherence scores across the tested range of K values. A higher bar indicates more semantically coherent topics at that K. The optimal K — marked with a star — is the value producing the highest average coherence across all topics. The perplexity line shows statistical fit; it typically decreases as K increases, illustrating why perplexity alone is insufficient for model selection.</p>
       <p><strong>Practical guidance from the literature:</strong> Röder et al. (2015) found that coherence typically peaks sharply then plateaus or declines. Boyd-Graber et al. (2017) recommend selecting K at the first significant peak rather than a global maximum, as very high K values often produce redundant or artificially split topics. Mimno et al. (2011) note that the optimal K is corpus-dependent and should be interpreted in light of domain knowledge — a coherence-optimal K of 12 may produce topics that are too fine-grained for a summary analysis but appropriate for detailed exploration.</p>
-      <p><strong>Rule of thumb:</strong> For corpora under 200 documents, test K from 2 to 15. For larger corpora of 500 or more documents, test K from 5 to 30. The coherence calculation requires fitting one LDA model per K value, so wider ranges increase computation time proportionally.</p>`
+      <p><strong>Rule of thumb:</strong> For corpora under 200 documents, test K from 2 to 15. For larger corpora of 500 or more documents, test K from 5 to 30. The coherence calculation requires fitting one LDA model per K value, so wider ranges increase computation time proportionally.</p>`,
+    pitfalls: `
+      <p><strong>Optimal K at the boundary of your tested range is a warning sign.</strong> Griffiths & Steyvers (2004) emphasize that if coherence is still rising at your maximum tested K, the true optimum has not been found yet — extend the range upward. Similarly, if the peak is at your minimum K, try testing lower values. A peak at the edge almost always means the search range was too narrow.</p>
+      <p><strong>Coherence alone is not sufficient.</strong> Boyd-Graber et al. (2017) caution that a coherence-optimal K may still produce topics that are semantically redundant or domain-irrelevant. Always inspect the actual topic words after selecting K — coherence is a guide, not a verdict. A K that is slightly below the coherence peak but produces more interpretable topics is often the better practical choice.</p>
+      <p><strong>Small corpora produce unreliable coherence scores.</strong> C_V coherence relies on word co-occurrence statistics. With fewer than 50 documents, these statistics are sparse and noisy, making the coherence curve erratic. Mimno et al. (2011) recommend using at least 100 documents for stable coherence estimation.</p>`
   }
 };
 
@@ -3248,6 +3597,7 @@ function toggleExplainer(key, btn) {
     <div class="explainer-grid">
       <div class="explainer-body">${ex.col1}</div>
       <div class="explainer-body">${ex.col2}</div>
+      ${ex.pitfalls ? `<div class="explainer-pitfalls"><div class="explainer-pitfalls-title">⚠ Common pitfalls</div>${ex.pitfalls}</div>` : ''}
     </div>`;
 
   panel.classList.add('open');
