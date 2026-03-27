@@ -2228,6 +2228,79 @@ input[type=range]:active { cursor: grabbing; }
 .ai-eval-send:disabled { opacity:.4; cursor:not-allowed; }
 .toolbar-btn.ai-btn { border-color: rgba(88,166,255,0.35); color: var(--accent); background: rgba(88,166,255,0.05); }
 .toolbar-btn.ai-btn:hover, .toolbar-btn.ai-btn.active { border-color: var(--accent); background: rgba(88,166,255,0.12); color: var(--accent); }
+
+/* ── Corpus Summary Panel ── */
+.corpus-summary {
+  margin-bottom: 20px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  background: rgba(88,166,255,0.04);
+  padding: 14px 18px;
+  animation: fadeInUp .4s ease both;
+}
+.corpus-summary-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.corpus-summary-label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--accent);
+}
+.corpus-summary-spinner {
+  width: 10px; height: 10px; border: 1.5px solid var(--rule);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin .7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.corpus-summary-text {
+  font-family: var(--font-body); font-size: 13px; line-height: 1.75;
+  color: var(--ink); min-height: 20px;
+}
+.corpus-summary-text.loading { color: var(--muted); font-style: italic; font-size: 12px; }
+
+/* ── Stopword Chips Panel ── */
+.stopword-chips-panel {
+  margin-bottom: 20px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--gold);
+  background: rgba(210,153,34,0.04);
+  padding: 14px 18px;
+  animation: fadeInUp .4s ease .15s both;
+}
+.stopword-chips-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+}
+.stopword-chips-label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gold);
+  display: flex; align-items: center; gap: 8px;
+}
+.stopword-chips-sub {
+  font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+}
+.stopword-chips-row {
+  display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px;
+}
+.stopword-chip {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  padding: 4px 10px; border: 1px solid rgba(210,153,34,0.4);
+  color: var(--gold); background: rgba(210,153,34,0.07);
+  cursor: pointer; transition: all .18s; border-radius: 2px;
+  display: flex; align-items: center; gap: 5px;
+}
+.stopword-chip:hover { background: rgba(210,153,34,0.18); border-color: var(--gold); }
+.stopword-chip.added { background: rgba(63,185,80,0.12); border-color: var(--accent2); color: var(--accent2); }
+.stopword-chip::after { content: '+'; font-size: 12px; opacity: .7; }
+.stopword-chip.added::after { content: '✓'; }
+.stopword-chips-apply {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; background: var(--gold); color: var(--bg);
+  border: none; padding: 6px 14px; cursor: pointer; transition: opacity .2s;
+  font-weight: 700; border-radius: 2px; margin-top: 10px;
+}
+.stopword-chips-apply:hover { opacity: .85; }
+.stopword-chips-loading { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-style: italic; }
+
 </style>
 </head>
 <body>
@@ -3635,6 +3708,12 @@ function renderTopics(data){
   if(data.method === 'lda') {
     setTimeout(() => renderAutoWordClouds(data), 400);
   }
+
+  // ── AI features: corpus summary + stopword suggestions ──
+  setTimeout(function() {
+    renderCorpusSummary(data, data.method);
+    renderStopwordSuggestions(data, data.method);
+  }, 200);
 }
 
 function renderAutoWordClouds(data) {
@@ -3884,6 +3963,11 @@ function renderSentiment(data){
   <table class="sent-table"><thead><tr><th>Sentence</th><th>Label</th><th>Score</th></tr></thead>
   <tbody>${data.sentences.slice(0,200).map(r=>`<tr><td>${r.sentence}</td><td><span class="sent-label ${r.label}">${r.label}</span></td><td style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">${r.compound.toFixed(3)}</td></tr>`).join('')}</tbody></table>`;
   document.getElementById('tabSummary').appendChild(wrap);
+
+  // ── AI features: corpus summary for sentiment ──
+  setTimeout(function() {
+    renderCorpusSummary(data, 'sentiment');
+  }, 200);
 }
 
 const renderers={bertopic:renderTopics,lda:renderTopics,tfidf:renderTfidf,wordfreq:renderWordfreq,sentiment:renderSentiment};
@@ -4600,6 +4684,152 @@ document.getElementById("aiEvalInput").addEventListener("input", function() {
   this.style.height = "auto";
   this.style.height = Math.min(this.scrollHeight, 100) + "px";
 });
+
+
+// ── Feature 2: Corpus Summary ──────────────────────────────────────────────
+async function renderCorpusSummary(data, method) {
+  const container = document.getElementById('tabSummary');
+
+  const panel = document.createElement('div');
+  panel.className = 'corpus-summary';
+  panel.innerHTML = '<div class="corpus-summary-header">' +
+    '<div class="corpus-summary-spinner" id="csSpin"></div>' +
+    '<span class="corpus-summary-label">Corpus Summary</span>' +
+    '</div>' +
+    '<div class="corpus-summary-text loading" id="csText">Generating summary...</div>';
+
+  // Insert at TOP of tabSummary
+  container.insertBefore(panel, container.firstChild);
+
+  // Build prompt
+  let prompt = '';
+  if (method === 'lda' || method === 'bertopic') {
+    prompt = 'In 2-3 sentences, summarize what this text corpus is about based on these ' + method.toUpperCase() + ' topics. Be specific about the domain and themes. Do not list the topics — write a flowing summary.\n\n';
+    data.topics.forEach(function(t) {
+      prompt += 'Topic ' + t.topic_id + ': ' + t.words.map(function(w){return w.word;}).join(', ') + '\n';
+    });
+  } else if (method === 'sentiment') {
+    const s = data.summary;
+    prompt = 'In 2-3 sentences, summarize the sentiment profile of this corpus. Positive: ' + s.positive_pct + '%, Neutral: ' + s.neutral_pct + '%, Negative: ' + s.negative_pct + '%, Avg compound: ' + s.avg_compound + ', Model: ' + s.model_used + '. Be specific and analytical.';
+  }
+
+  try {
+    const res = await fetch(getApiUrl() + '/ai/evaluate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+      body: JSON.stringify({
+        system: 'You are a concise NLP analyst. Summarize corpora in plain, direct academic prose. No bullet points, no headers, no markdown.',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const d = await res.json();
+    const text = d.content || 'Could not generate summary.';
+    document.getElementById('csText').textContent = text;
+    document.getElementById('csText').classList.remove('loading');
+    document.getElementById('csSpin').style.display = 'none';
+  } catch(e) {
+    document.getElementById('csText').textContent = 'Summary unavailable — backend not reachable.';
+    document.getElementById('csText').classList.remove('loading');
+    document.getElementById('csSpin').style.display = 'none';
+  }
+}
+
+// ── Feature 3: Stopword Chip Suggestions ───────────────────────────────────
+async function renderStopwordSuggestions(data, method) {
+  if (method !== 'lda' && method !== 'bertopic') return;
+
+  const container = document.getElementById('tabSummary');
+
+  const panel = document.createElement('div');
+  panel.className = 'stopword-chips-panel';
+  panel.innerHTML = '<div class="stopword-chips-header">' +
+    '<span class="stopword-chips-label"><span class="corpus-summary-spinner" id="swSpin"></span>Suggested Stopwords</span>' +
+    '<span class="stopword-chips-sub">Click to add · then re-run analysis</span>' +
+    '</div>' +
+    '<div class="stopword-chips-row" id="swChips"><span class="stopword-chips-loading">Analysing topic overlap...</span></div>';
+
+  // Insert after corpus summary (second position)
+  const firstChild = container.firstChild;
+  if (firstChild && firstChild.nextSibling) {
+    container.insertBefore(panel, firstChild.nextSibling);
+  } else {
+    container.appendChild(panel);
+  }
+
+  // Build prompt
+  let prompt = 'Look at these ' + method.toUpperCase() + ' topics and identify words that appear in MULTIPLE topics and provide no discriminative power between them. Return ONLY a JSON array of strings — the stopwords to add. No explanation, no markdown, just the JSON array. Maximum 12 words.\n\n';
+  data.topics.forEach(function(t) {
+    prompt += 'Topic ' + t.topic_id + ': ' + t.words.map(function(w){return w.word;}).join(', ') + '\n';
+  });
+
+  try {
+    const res = await fetch(getApiUrl() + '/ai/evaluate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+      body: JSON.stringify({
+        system: 'You are an NLP preprocessing expert. Return ONLY a valid JSON array of strings. No markdown, no explanation, no backticks. Example: ["word1","word2","word3"]',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const d = await res.json();
+    let words = [];
+    try {
+      const raw = (d.content || '[]').trim();
+      const clean = raw.replace(/```json|```/g, '').trim();
+      words = JSON.parse(clean);
+    } catch(e) { words = []; }
+
+    const chipsRow = document.getElementById('swChips');
+    chipsRow.innerHTML = '';
+    document.getElementById('swSpin').style.display = 'none';
+
+    if (!words.length) {
+      chipsRow.innerHTML = '<span class="stopword-chips-loading">No additional stopwords suggested for these topics.</span>';
+      return;
+    }
+
+    words.forEach(function(word) {
+      const chip = document.createElement('button');
+      chip.className = 'stopword-chip';
+      chip.textContent = word;
+      chip.title = 'Click to add "' + word + '" to custom stopwords';
+      chip.onclick = function() {
+        chip.classList.toggle('added');
+      };
+      chipsRow.appendChild(chip);
+    });
+
+    // Apply button
+    const applyBtn = document.createElement('button');
+    applyBtn.className = 'stopword-chips-apply';
+    applyBtn.textContent = '+ Add Selected to Stopwords';
+    applyBtn.onclick = function() {
+      const selected = Array.from(chipsRow.querySelectorAll('.stopword-chip.added')).map(function(c){ return c.textContent; });
+      if (!selected.length) { showToast('Select at least one word first'); return; }
+
+      // Add to both LDA and BERTopic custom stopword fields
+      ['ldaCustomStop', 'btCustomStop', 'tfidfCustomStop'].forEach(function(id) {
+        const field = document.getElementById(id);
+        if (!field) return;
+        const existing = field.value.trim();
+        const newWords = selected.filter(function(w){ return !existing.includes(w); }).join(', ');
+        field.value = existing ? existing + ', ' + newWords : newWords;
+      });
+
+      showToast('✓ Added ' + selected.length + ' stopword(s) — re-run analysis to apply');
+      selected.forEach(function(w) {
+        chipsRow.querySelectorAll('.stopword-chip').forEach(function(c){
+          if (c.textContent === w) c.classList.add('added');
+        });
+      });
+    };
+    panel.appendChild(applyBtn);
+
+  } catch(e) {
+    document.getElementById('swChips').innerHTML = '<span class="stopword-chips-loading">Suggestions unavailable.</span>';
+    document.getElementById('swSpin').style.display = 'none';
+  }
+}
 
 </script>
 <div class="toast" id="toast"></div>
