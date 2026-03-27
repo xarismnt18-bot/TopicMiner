@@ -3583,83 +3583,77 @@ function updateMtsAdvisor() {
   const mts   = parseInt(document.getElementById('btMin').value) || 5;
   const nDocs = uploadedFiles.length;
 
-  // ── Compute suggested values based on doc count ──
-  // Rule of thumb: ~2–5% of docs, with sensible floor/ceiling
-  const micro    = Math.max(2,  Math.round(nDocs * 0.02));
-  const balanced = Math.max(5,  Math.round(nDocs * 0.05));
-  const broad    = Math.max(10, Math.round(nDocs * 0.10));
+  // All thresholds scale relative to corpus size
+  const p         = nDocs > 0 ? nDocs : 50;
+  const vMicro    = Math.max(2, Math.round(p * 0.02));
+  const vDetailed = Math.max(3, Math.round(p * 0.05));
+  const vOptimal  = Math.max(5, Math.round(p * 0.08));
+  const vBroad    = Math.max(8, Math.round(p * 0.15));
 
-  // ── Describe current behavior ──
   let iconStr, behaviorText, recText, stateClass;
+  const pct = nDocs > 0 ? Math.round(mts / nDocs * 100) : 0;
 
-  if (mts <= 3) {
-    iconStr      = '🔬';
-    behaviorText = 'Detects micro-topics (noise risk)';
-    recText      = 'Clusters form from just ' + mts + ' documents — HDBSCAN will pick up very specific but potentially meaningless patterns. Expect many noisy or one-off topics mixed in with real ones. Only use this on very large, diverse corpora.';
-    stateClass   = 'warn';
-  } else if (mts <= 8) {
-    iconStr      = '⚖️';
-    behaviorText = 'Semi-stable topics';
-    recText      = 'Topics need at least ' + mts + ' documents to form — a reasonable starting point that captures specific themes without too much noise. Good for medium-sized corpora where you want detailed, specific topics.';
-    stateClass   = 'good';
-  } else if (mts <= 15) {
-    iconStr      = '✅';
-    behaviorText = 'Optimal — stable, meaningful topics';
-    recText      = 'The sweet spot. Topics require solid document support to emerge, filtering out noise while preserving real thematic clusters. Recommended for most corpora.';
-    stateClass   = 'good';
-  } else if (mts <= 19) {
-    iconStr      = '📚';
-    behaviorText = 'Broad topics only';
-    recText      = 'Only dominant, well-represented themes will surface. Smaller or niche topics will be absorbed into the outlier (-1) group. Use this when you specifically want high-level themes.';
-    stateClass   = nDocs > 0 && mts > nDocs * 0.3 ? 'warn' : '';
-  } else {
-    iconStr      = '🚨';
-    behaviorText = 'Too aggressive — most docs become outliers';
-    recText      = 'Min topic size of ' + mts + ' is very high. Unless your corpus has hundreds of documents per theme, HDBSCAN will reject most clusters and dump them into noise. Lower this to get meaningful results.';
-    stateClass   = 'bad';
-  }
-
-  // ── Corpus-aware warning overlay ──
   if (nDocs === 0) {
-    recText = 'Upload files first and this panel will give you personalised suggestions based on your corpus size.';
-    stateClass = '';
+    iconStr      = '💡';
+    behaviorText = 'Upload files for personalised advice';
+    recText      = 'Once you upload your corpus, this panel will calculate the ideal min topic size based on your document count and give you one-click presets.';
+    stateClass   = '';
   } else if (mts >= nDocs * 0.5) {
     iconStr      = '🚨';
-    behaviorText = 'Too large for your corpus';
-    recText      = 'Min topic size of ' + mts + ' is ≥ 50% of your ' + nDocs + ' document(s). HDBSCAN will likely produce 0–1 topics. Reduce it significantly.';
+    behaviorText = 'Too large — will produce 0–1 topics';
+    recText      = 'Min topic size of ' + mts + ' requires ' + pct + '% of your entire corpus per topic. HDBSCAN will find no clusters. Use the presets below.';
+    stateClass   = 'bad';
+  } else if (mts >= Math.round(p * 0.20)) {
+    iconStr      = '📚';
+    behaviorText = 'Aggressive — only dominant themes will appear';
+    recText      = 'Each topic needs ' + mts + ' docs (' + pct + '% of ' + nDocs + '). Niche themes will become outliers. Use only for a high-level overview.';
+    stateClass   = 'warn';
+  } else if (mts >= vOptimal) {
+    iconStr      = '✅';
+    behaviorText = 'Optimal — stable, well-supported topics';
+    recText      = 'Topics require ' + mts + ' docs (' + pct + '% of corpus). This is the sweet spot for your corpus size — solid clusters with minimal noise.';
+    stateClass   = 'good';
+  } else if (mts >= vDetailed) {
+    iconStr      = '⚖️';
+    behaviorText = 'Semi-stable — detailed but some noise possible';
+    recText      = 'Topics need ' + mts + ' docs (' + pct + '% of corpus). Fine-grained topics will emerge. Some may be noisy. Good for large, diverse corpora.';
+    stateClass   = 'good';
+  } else if (mts >= vMicro) {
+    iconStr      = '🔬';
+    behaviorText = 'Micro-topics — high noise risk';
+    recText      = 'Only ' + mts + ' docs per topic (' + pct + '% of corpus). Expect many small, noisy clusters. Recommended only for corpora with 1000+ documents.';
+    stateClass   = 'warn';
+  } else {
+    iconStr      = '🚨';
+    behaviorText = 'Too small — mostly noise expected';
+    recText      = mts + ' docs per topic is too few. Increase to at least ' + vDetailed + ' for reliable results with your corpus.';
     stateClass   = 'bad';
   }
 
-  // ── Render ──
-  advisor.className = 'mts-advisor' + (stateClass ? ' ' + stateClass : '');
-  icon.textContent  = iconStr;
+  advisor.className    = 'mts-advisor' + (stateClass ? ' ' + stateClass : '');
+  icon.textContent     = iconStr;
   behavior.textContent = behaviorText;
-  rec.textContent   = recText;
+  rec.textContent      = recText;
 
-  // ── Preset buttons ──
+  // Preset buttons — active class ONLY on the currently selected value
   presets.innerHTML = '';
-  const suggestions = nDocs > 0
-    ? [
-        { val: micro,        label: 'Micro',       sub: 'noise risk' },
-        { val: balanced,     label: 'Semi-stable',  sub: 'detailed' },
-        { val: broad,        label: 'Optimal',      sub: 'recommended' },
-        { val: Math.max(20, Math.round(nDocs * 0.20)), label: 'Aggressive', sub: 'broad only' },
-      ]
-    : [
-        { val: 3,  label: 'Micro',       sub: 'noise risk' },
-        { val: 8,  label: 'Semi-stable', sub: 'detailed' },
-        { val: 15, label: 'Optimal',     sub: 'recommended' },
-        { val: 20, label: 'Aggressive',  sub: 'broad only' },
-      ];
+  const suggestions = [
+    { val: vMicro,    label: 'Micro',    sub: 'noise risk' },
+    { val: vDetailed, label: 'Detailed', sub: 'fine-grained' },
+    { val: vOptimal,  label: 'Optimal',  sub: 'recommended' },
+    { val: vBroad,    label: 'Broad',    sub: 'high-level only' },
+  ];
 
-  suggestions.forEach(s => {
+  suggestions.forEach(function(s) {
     const btn = document.createElement('button');
     btn.className = 'mts-preset-btn' + (s.val === mts ? ' active' : '');
-    btn.innerHTML = s.val + '<span>' + s.label + ' · ' + s.sub + '</span>';
-    btn.onclick = () => {
-      const slider = document.getElementById('btMin');
-      slider.value = s.val;
-      document.getElementById('btMinVal').textContent = s.val;
+    const pctBtn = nDocs > 0 ? ' (' + Math.round(s.val / nDocs * 100) + '%)' : '';
+    btn.innerHTML = s.val + '<span>' + s.label + ' · ' + s.sub + pctBtn + '</span>';
+    btn.onclick = function() {
+      const slider  = document.getElementById('btMin');
+      const clamped = Math.min(s.val, parseInt(slider.max) || 100);
+      slider.value  = clamped;
+      document.getElementById('btMinVal').textContent = clamped;
       updateRange(slider);
       updateMtsAdvisor();
     };
