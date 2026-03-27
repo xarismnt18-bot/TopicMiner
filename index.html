@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>TopicMiner — NLP Text Analysis Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root {
   --bg: #0d1117;
@@ -485,118 +484,17 @@ body::before {
 .api-test-btn:hover { border-color: var(--accent2); color: var(--accent2); }
 
 /* ── Colab note ── */
-
-/* ── Min Topic Size Advisor ── */
-.mts-advisor {
-  background: var(--bg2);
-  border: 1px solid var(--rule);
+.colab-note {
+  background: rgba(88,166,255,0.06);
+  border: 1px solid rgba(88,166,255,0.15);
   border-left: 3px solid var(--accent);
-  padding: 12px 14px;
-  margin-bottom: 4px;
-  transition: border-color .3s;
-}
-.mts-advisor.warn  { border-left-color: var(--gold); }
-.mts-advisor.bad   { border-left-color: var(--accent3); }
-.mts-advisor.good  { border-left-color: var(--accent2); }
-
-.mts-advisor-header {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 7px;
-}
-.mts-advisor-icon { font-size: 14px; }
-.mts-advisor-title {
+  padding: 10px 14px;
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.mts-behavior {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 5px;
-  line-height: 1.3;
-}
-.mts-rec {
-  font-family: var(--font-body);
   font-size: 11px;
-  color: var(--ink2);
-  line-height: 1.6;
-  margin-bottom: 10px;
+  color: var(--accent);
+  margin-bottom: 32px;
+  line-height: 1.5;
 }
-.mts-presets { border-top: 1px solid var(--rule); padding-top: 9px; }
-.mts-preset-label {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  display: block;
-  margin-bottom: 7px;
-}
-.mts-preset-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.mts-preset-btn {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border: 1px solid var(--rule);
-  background: var(--surface);
-  color: var(--ink2);
-  cursor: pointer;
-  transition: all .2s;
-  border-radius: 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
-.mts-preset-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,0.06); }
-.mts-preset-btn.active { border-color: var(--accent2); color: var(--accent2); background: rgba(63,185,80,0.08); }
-.mts-preset-btn span { font-size: 8px; color: var(--muted); font-weight: 400; letter-spacing: .05em; }
-.advanced-toggle-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.advanced-toggle-btn {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  background: none;
-  border: 1px solid var(--rule);
-  color: var(--muted);
-  padding: 4px 12px;
-  cursor: pointer;
-  transition: border-color .2s, color .2s;
-  border-radius: 2px;
-}
-.advanced-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
-.advanced-toggle-btn.open  { border-color: var(--accent2); color: var(--accent2); }
-
-.api-status-inline {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.api-status-text {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: .05em;
-  transition: color .3s;
-}
-.api-status.ok  ~ * .api-status-text,
-.api-status-text.ok  { color: var(--accent2); }
-.api-status-text.err { color: var(--accent3); }
 
 /* ── Hero ── */
 .hero {
@@ -800,27 +698,7 @@ h1 em {
 .file-name { flex: 1; font-family: var(--font-mono); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .file-size { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
 .file-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; transition: color .2s; }
-.file-remove:hover { color: var(--accent3); }
-
-.file-convert {
-  background: none;
-  border: 1px solid rgba(88,166,255,0.3);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  cursor: pointer;
-  transition: all .2s;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.file-convert:hover { background: rgba(88,166,255,0.1); border-color: var(--accent); }
-.file-convert:disabled { opacity: .4; cursor: not-allowed; }
-.file-convert.converting { color: var(--gold); border-color: var(--gold); animation: dotPulse .8s infinite; }
-.file-convert.done { color: var(--accent2); border-color: var(--accent2); }
+.file-remove:hover { color: var(--accent); }
 
 /* ── Methods ── */
 .methods { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1201,35 +1079,6 @@ select:focus { border-color: var(--ink); }
 }
 .config-text-input:focus { border-bottom-color: var(--ink); }
 
-/* ── Explainer pitfalls block ── */
-.explainer-pitfalls {
-  grid-column: 1 / -1;
-  margin-top: 20px;
-  padding: 14px 18px;
-  background: rgba(247,129,102,0.06);
-  border: 1px solid rgba(247,129,102,0.18);
-  border-left: 3px solid var(--accent3);
-}
-.explainer-pitfalls-title {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--accent3);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.explainer-pitfalls p {
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--ink2);
-  margin-bottom: 6px;
-}
-.explainer-pitfalls p:last-child { margin-bottom: 0; }
-.explainer-pitfalls strong { color: var(--accent3); font-weight: 600; }
-
 /* ── Method Explainer Panel ── */
 .explainer-panel {
   border: 1px solid var(--rule);
@@ -1241,7 +1090,7 @@ select:focus { border-color: var(--ink); }
   margin-bottom: 0;
 }
 .explainer-panel.open {
-  max-height: 1400px;
+  max-height: 700px;
   margin-bottom: 32px;
 }
 .explainer-inner { padding: 28px 32px; }
@@ -1434,8 +1283,8 @@ select:focus { border-color: var(--ink); }
 /* ── References Section ── */
 .refs-section {
   border-top: 1px solid var(--rule);
-  padding: 0;
-  margin-top: 0;
+  padding: 36px 0;
+  margin-top: 40px;
 }
 
 .refs-grid {
@@ -1483,7 +1332,7 @@ select:focus { border-color: var(--ink); }
 /* ── Glossary ── */
 .glossary-section {
   border-top: 1px solid var(--rule);
-  padding: 0;
+  padding: 32px 0;
 }
 
 .glossary-grid {
@@ -1519,11 +1368,10 @@ select:focus { border-color: var(--ink); }
   .howto-grid { grid-template-columns: 1fr 1fr; }
   .refs-grid { grid-template-columns: 1fr; }
   .glossary-grid { grid-template-columns: 1fr 1fr; }
-  .about-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Collapsible Sections ── */
-.collapsible-section { cursor: default; margin-top: 6px; }
+.collapsible-section { cursor: default; }
 .collapsible-trigger {
   display: flex;
   align-items: baseline;
@@ -1564,7 +1412,7 @@ select:focus { border-color: var(--ink); }
   overflow: hidden;
   transition: max-height .5s ease;
 }
-.collapsible-body.open { max-height: 4000px; }
+.collapsible-body.open { max-height: 2000px; }
 
 /* ── Export & Copy ── */
 .results-toolbar {
@@ -1690,50 +1538,11 @@ select:focus { border-color: var(--ink); }
   gap: 10px;
 }
 
-.footer-left {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
 .footer-copy {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--muted);
   letter-spacing: .08em;
-}
-
-.footer-author {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: .06em;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.footer-name {
-  color: var(--ink2);
-  font-weight: 600;
-}
-
-.footer-linkedin {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--accent);
-  text-decoration: none;
-  font-size: 10px;
-  letter-spacing: .08em;
-  border: 1px solid rgba(88,166,255,0.25);
-  padding: 2px 8px;
-  border-radius: 2px;
-  transition: all .2s;
-}
-.footer-linkedin:hover {
-  background: rgba(88,166,255,0.08);
-  border-color: var(--accent);
 }
 
 .footer-methods {
@@ -1750,260 +1559,7 @@ select:focus { border-color: var(--ink); }
   color: var(--muted);
 }
 
-/* ── About section ── */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px 40px;
-}
-
-.about-block {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.about-block-label {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--rule);
-}
-
-.about-block p {
-  font-size: 13px;
-  line-height: 1.75;
-  color: var(--ink2);
-}
-.about-block p strong { color: var(--ink); }
-
-.about-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 0;
-  margin: 0;
-}
-.about-list li {
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--ink2);
-  padding-left: 14px;
-  position: relative;
-}
-.about-list li::before {
-  content: '→';
-  position: absolute;
-  left: 0;
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 10px;
-}
-.about-list li strong { color: var(--ink); }
-
-.about-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.about-tech {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border: 1px solid var(--rule);
-  color: var(--muted);
-  background: var(--surface);
-  border-radius: 2px;
-}
-
-/* ── Download All TXT button ── */
-.download-all-btn {
-  width: 100%;
-  padding: 8px 14px;
-  background: none;
-  border: 1px solid rgba(88,166,255,0.3);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all .2s;
-  border-radius: 2px;
-}
-.download-all-btn:hover {
-  background: rgba(88,166,255,0.08);
-  border-color: var(--accent);
-}
-
-/* ── FAQ ── */
-.faq-list { display: flex; flex-direction: column; gap: 0; }
-
-.faq-item {
-  border-bottom: 1px solid var(--rule);
-}
-.faq-item:first-child { border-top: 1px solid var(--rule); }
-
-.faq-q {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 4px;
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
-  gap: 12px;
-  transition: color .2s;
-  user-select: none;
-}
-.faq-q:hover { color: var(--accent); }
-.faq-q:hover .faq-arrow { color: var(--accent); }
-
-.faq-arrow {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  color: var(--muted);
-  flex-shrink: 0;
-  transition: transform .25s, color .2s;
-  line-height: 1;
-}
-.faq-item.open .faq-arrow { transform: rotate(45deg); color: var(--accent); }
-
-.faq-a {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .35s ease, padding .3s ease;
-  padding: 0 4px;
-}
-.faq-item.open .faq-a {
-  max-height: 400px;
-  padding: 0 4px 16px;
-}
-.faq-a p {
-  font-size: 13px;
-  line-height: 1.75;
-  color: var(--ink2);
-  margin-bottom: 8px;
-}
-.faq-a p:last-child { margin-bottom: 0; }
-.faq-a strong { color: var(--ink); }
-
-/* ── Privacy Notice ── */
-.privacy-notice {
-  margin-top: 40px;
-  background: rgba(63,185,80,0.04);
-  border: 1px solid rgba(63,185,80,0.15);
-  border-left: 3px solid var(--accent2);
-  padding: 18px 22px;
-}
-
-.privacy-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.privacy-icon { font-size: 15px; }
-
-.privacy-title {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--accent2);
-}
-
-.privacy-body p {
-  font-size: 12px;
-  line-height: 1.75;
-  color: var(--ink2);
-  margin-bottom: 8px;
-}
-.privacy-body p:last-child { margin-bottom: 0; }
-.privacy-body strong { color: var(--ink); }
-
-/* ── Print styles — only show results panel ── */
-@media print {
-  /* Hide absolutely everything */
-  body * { visibility: hidden; }
-
-  /* Show only the results panel and its children */
-  #resultsPanel,
-  #resultsPanel * { visibility: visible; }
-
-  /* Position results panel to fill the page */
-  #resultsPanel {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 20px 32px !important;
-    background: #fff !important;
-    color: #111 !important;
-    font-size: 11pt !important;
-  }
-
-  /* Hide toolbar buttons inside results */
-  .results-toolbar,
-  .toolbar-btn,
-  .export-menu-item,
-  #exportDropdown,
-  .copy-word-btn,
-  .tab { display: none !important; }
-
-  /* Force light background on topic cards */
-  .topic-card {
-    background: #f9f9f9 !important;
-    border: 1px solid #ccc !important;
-    break-inside: avoid;
-  }
-
-  .topic-word {
-    background: #eee !important;
-    color: #111 !important;
-    border-color: #ccc !important;
-  }
-
-  .topic-word.w1 {
-    background: #333 !important;
-    color: #fff !important;
-  }
-
-  /* TF-IDF bars */
-  .tfidf-bar { background: #555 !important; }
-
-  /* Sentiment table */
-  .sent-table td, .sent-table th { color: #111 !important; border-color: #ccc !important; }
-  .sent-pill { border: 1px solid #ccc !important; background: #f5f5f5 !important; }
-  .sent-pill-pct { color: #111 !important; }
-
-  /* Word clouds — keep visible but simple */
-  .wc-cloud { border: 1px solid #ccc !important; background: #fafafa !important; }
-
-  /* Results header */
-  .results-title { color: #111 !important; }
-  .results-meta  { color: #555 !important; }
-
-  /* Page setup */
-  @page {
-    margin: 1.5cm;
-    size: A4 portrait;
-  }
-}
+/* ── Responsive ── */
 @media (max-width: 820px) {
   .hero { grid-template-columns: 1fr; }
   .hero-main { padding: 24px 0; border-right: none; border-bottom: 1px solid var(--rule); }
@@ -2159,6 +1715,75 @@ input[type=range]:active { cursor: grabbing; }
   100% { opacity: 1; transform: rotate(var(--r,0deg)) scale(1); filter: blur(0); }
 }
 
+/* ── AI Evaluation Chat Panel ── */
+.ai-eval-panel {
+  margin-top: 24px;
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  background: var(--surface);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .45s cubic-bezier(0.4,0,0.2,1);
+}
+.ai-eval-panel.open { max-height: 720px; }
+.ai-eval-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--rule);
+  background: rgba(88,166,255,0.04);
+}
+.ai-eval-header-left { display:flex; align-items:center; gap:10px; }
+.ai-eval-title {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--accent);
+}
+.ai-eval-model { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: .06em; }
+.ai-eval-close {
+  background: none; border: none; color: var(--muted);
+  font-family: var(--font-mono); font-size: 11px;
+  cursor: pointer; padding: 2px 6px; transition: color .2s;
+}
+.ai-eval-close:hover { color: var(--accent3); }
+.ai-eval-messages {
+  padding: 16px; max-height: 400px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth;
+}
+.ai-eval-messages::-webkit-scrollbar { width: 4px; }
+.ai-eval-messages::-webkit-scrollbar-thumb { background: var(--rule); }
+.eval-msg { display:flex; flex-direction:column; gap:4px; animation: evalMsgIn .3s ease both; }
+@keyframes evalMsgIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+.eval-msg-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.eval-msg-label.assistant { color: var(--accent); }
+.eval-msg-body {
+  font-family: var(--font-body); font-size: 13px; line-height: 1.8; color: var(--ink2);
+  background: var(--bg2); border: 1px solid var(--rule); padding: 10px 14px;
+  border-left: 3px solid var(--rule); white-space: pre-wrap;
+}
+.eval-msg-body.assistant { border-left-color: var(--accent); color: var(--ink); }
+.eval-msg-body.user { border-left-color: var(--muted); background: transparent; font-style: italic; color: var(--ink2); }
+.eval-msg-body.thinking { border-left-color: var(--gold); color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.eval-msg-body.thinking::after { content:'▋'; animation: blink .7s step-end infinite; }
+@keyframes blink { 50%{opacity:0;} }
+.ai-eval-input-row { display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--rule); background: var(--bg); }
+.ai-eval-input {
+  flex:1; background: var(--surface); border: 1px solid var(--rule);
+  border-bottom: 2px solid var(--rule); padding: 8px 12px;
+  font-family: var(--font-body); font-size: 13px; color: var(--ink);
+  outline: none; resize: none; min-height: 38px; max-height: 100px;
+  transition: border-color .2s; border-radius: 0; line-height: 1.5;
+}
+.ai-eval-input:focus { border-bottom-color: var(--accent); }
+.ai-eval-input::placeholder { color: var(--muted); font-style: italic; }
+.ai-eval-send {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; background: var(--ink); color: var(--bg);
+  border: none; padding: 8px 16px; cursor: pointer; transition: background .2s;
+  flex-shrink: 0; align-self: flex-end; font-weight: 700; border-radius: 0;
+}
+.ai-eval-send:hover { background: var(--accent); }
+.ai-eval-send:disabled { opacity:.4; cursor:not-allowed; }
+.toolbar-btn.ai-btn { border-color: rgba(88,166,255,0.35); color: var(--accent); background: rgba(88,166,255,0.05); }
+.toolbar-btn.ai-btn:hover, .toolbar-btn.ai-btn.active { border-color: var(--accent); background: rgba(88,166,255,0.12); color: var(--accent); }
+
 </style>
 </head>
 <body>
@@ -2200,23 +1825,17 @@ input[type=range]:active { cursor: grabbing; }
     <div class="explainer-inner" id="explainerInner"></div>
   </div>
 
-  <!-- Advanced toggle row -->
-  <div class="advanced-toggle-row">
-    <button class="advanced-toggle-btn" id="advancedToggle" onclick="toggleAdvanced()">&#9881; Advanced</button>
-    <div class="api-status-inline">
-      <div class="api-status" id="apiStatus"></div>
-      <span class="api-status-text" id="apiStatusText">checking&hellip;</span>
-    </div>
-  </div>
-
-  <!-- API Bar (hidden by default) -->
-  <div class="api-bar" id="apiBar" style="display:none; margin-bottom:12px;">
+  <!-- API Bar -->
+  <div class="api-bar">
     <label>Backend URL</label>
     <input type="text" id="apiUrl" value="https://textmine-backend.onrender.com" placeholder="Paste your Colab or Render URL" oninput="localStorage.setItem('textmine_api_url', this.value)"/>
+    <div class="api-status" id="apiStatus"></div>
     <button class="api-test-btn" onclick="pingApi()">Test Connection</button>
   </div>
 
-  <span id="autoSwitchLabel" style="display:none"></span>
+  <div class="colab-note">
+    ℹ For real BERTopic with BERT embeddings, run <strong>TextMine_Colab.ipynb</strong> in Google Colab and paste the ngrok URL above. For all other methods, the Render URL works fine.
+  </div>
 
   <!-- Hero -->
   <div class="hero">
@@ -2263,9 +1882,6 @@ input[type=range]:active { cursor: grabbing; }
           </div>
         </div>
         <div class="file-list" id="fileList"></div>
-        <div id="downloadAllWrap" style="display:none; margin-top:8px;">
-          <button class="download-all-btn" onclick="downloadAllTxt()">⬇ Download All as TXT</button>
-        </div>
       </div>
 
       <!-- Methods -->
@@ -2316,23 +1932,8 @@ input[type=range]:active { cursor: grabbing; }
           <div class="config-label">Number of Topics <span class="val" id="btTopicsVal">10</span></div>
           <input type="range" id="btTopics" min="2" max="50" value="10" oninput="document.getElementById('btTopicsVal').textContent=this.value;updateRange(this)"/>
           <div class="config-label">Min Topic Size <span class="val" id="btMinVal">5</span></div>
-          <input type="range" id="btMin" min="2" max="100" value="5" oninput="document.getElementById('btMinVal').textContent=this.value;updateRange(this);updateMtsAdvisor()"/>
-
-          <!-- Min Topic Size Advisor -->
-          <div class="mts-advisor" id="mtsAdvisor">
-            <div class="mts-advisor-header">
-              <span class="mts-advisor-icon" id="mtsIcon">💡</span>
-              <span class="mts-advisor-title" id="mtsTitle">Min Topic Size Advisor</span>
-            </div>
-            <div class="mts-behavior" id="mtsBehavior"></div>
-            <div class="mts-rec" id="mtsRec"></div>
-            <div class="mts-presets">
-              <span class="mts-preset-label">Suggestions for your corpus:</span>
-              <div class="mts-preset-row" id="mtsPresets"></div>
-            </div>
-          </div>
-
-          <div class="config-label" style="margin-top:14px">Language</div>
+          <input type="range" id="btMin" min="2" max="100" value="5" oninput="document.getElementById('btMinVal').textContent=this.value;updateRange(this)"/>
+          <div class="config-label">Language</div>
           <select id="btLang"><option value="english">English</option><option value="spanish">Spanish</option><option value="french">French</option><option value="portuguese">Portuguese</option><option value="multilingual">Multilingual</option></select>
           <div class="toggle-row">
             <div><div class="toggle-label">Reduce outliers</div><div class="toggle-sub">Merge noise into nearest topic</div></div>
@@ -2496,6 +2097,7 @@ input[type=range]:active { cursor: grabbing; }
         </div>
         <button class="toolbar-btn" onclick="copyAllResults(this)">⧉ Copy All Results</button>
         <button class="toolbar-btn" onclick="copyResultsJSON(this)">{ } Copy JSON</button>
+        <button class="toolbar-btn ai-btn" id="aiEvalBtn" style="display:none" onclick="toggleAiEval()">✦ Discuss Results</button>
       </div>
       <div class="tabs">
         <button class="tab active" onclick="switchTab('summary',this)">Summary</button>
@@ -2503,6 +2105,24 @@ input[type=range]:active { cursor: grabbing; }
       </div>
       <div id="tabSummary"></div>
       <div id="tabRaw" style="display:none"><div class="raw-code" id="rawData"></div></div>
+    </div>
+  </div>
+
+  <!-- AI Evaluation Chat Panel -->
+  <div class="ai-eval-panel" id="aiEvalPanel">
+    <div class="ai-eval-header">
+      <div class="ai-eval-header-left">
+        <span style="font-size:15px;line-height:1">✦</span>
+        <span class="ai-eval-title">AI Results Evaluation</span>
+        <span class="ai-eval-model">Claude · context-aware</span>
+      </div>
+      <button class="ai-eval-close" onclick="toggleAiEval()">✕ Close</button>
+    </div>
+    <div class="ai-eval-messages" id="aiEvalMessages"></div>
+    <div class="ai-eval-input-row">
+      <textarea class="ai-eval-input" id="aiEvalInput" placeholder="Ask a follow-up question about the results…" rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiEvalMsg();}"></textarea>
+      <button class="ai-eval-send" id="aiEvalSend" onclick="sendAiEvalMsg()">Send ↵</button>
     </div>
   </div>
 
@@ -2536,9 +2156,6 @@ input[type=range]:active { cursor: grabbing; }
       </div>
     </div>
   </div>
-
-  <!-- Collapsible block: References, Glossary, FAQ, About -->
-  <div style="margin-top:48px;">
 
   <!-- References -->
   <div class="refs-section collapsible-section">
@@ -2693,201 +2310,9 @@ input[type=range]:active { cursor: grabbing; }
     </div>
   </div>
 
-  <!-- FAQ & Privacy -->
-  <div class="collapsible-section">
-    <div class="section-head" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">
-      <div class="collapsible-trigger" onclick="toggleSection(this,'faqBody')" style="width:100%;border-bottom:2px solid var(--ink);padding-bottom:12px;">
-        <h2>FAQ &amp; Privacy</h2>
-        <div style="display:flex;align-items:center;gap:16px;">
-          <span class="section-head-tag" style="margin-left:0">Common questions · Data notice</span>
-          <div class="collapsible-arrow">Show</div>
-        </div>
-      </div>
-    </div>
-    <div class="collapsible-body" id="faqBody">
-      <div style="height:20px"></div>
-
-      <!-- FAQ -->
-      <div class="section-head" style="border-bottom:1px solid var(--rule);margin-bottom:0;">
-        <h2 style="font-size:15px;color:var(--ink2)">Frequently Asked Questions</h2>
-      </div>
-      <div class="faq-list">
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Why do I get 0 topics or very few topics from BERTopic?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p>This almost always means <strong>min_topic_size is too large</strong> relative to your corpus. HDBSCAN requires at least min_topic_size documents to form a cluster — if your corpus has 50 documents and min_topic_size is 20, only themes with 20+ documents will appear as topics; everything else becomes outlier noise (-1). Try reducing min_topic_size to 5–10 for small corpora. Also check that your ngrok/Colab URL is active — a disconnected backend will return an empty response silently.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>What is the difference between BERTopic and LDA?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p><strong>BERTopic</strong> uses deep neural embeddings (BERT) to understand the meaning of words in context. It is more accurate, especially for complex or ambiguous language, but requires a GPU and significant computation time. It works best on corpora of 500+ documents.</p>
-            <p><strong>LDA</strong> treats each document as a bag of words — word order and context are ignored. It is much faster, runs on any machine, and works well on corpora as small as 50 documents. For most research use cases, LDA is the practical starting point and BERTopic is used to validate or deepen the findings.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>How many documents do I need for good results?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p>It depends on the method. <strong>LDA</strong> works from around 50 documents, though 200+ produces more stable results. <strong>BERTopic</strong> needs at least 100–200 documents and performs best above 500. <strong>TF-IDF</strong> and <strong>Sentiment Analysis</strong> work on any number of documents — even a single file. <strong>Word Cloud</strong> follows LDA's requirements since it runs LDA internally. As a general rule: more documents → more reliable topics.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Why do my topics all contain the same words?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p>This is the most common preprocessing problem. Domain-specific high-frequency words pass through the stopword filter because they are not in the standard English stopword list. The fix is to add these words to the <strong>Custom Stopwords</strong> field (comma-separated) and rerun. Also try enabling <strong>Lemmatization</strong> and lowering <strong>Max Doc Frequency</strong> to automatically exclude corpus-wide terms.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>How do I choose the right number of topics (K) for LDA?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p>Use the <strong>Coherence Score</strong> tool — it automatically tests a range of K values and identifies the one producing the most semantically coherent topics. As a starting heuristic, try K ≈ √(N/2) where N is the number of documents (e.g. 200 documents → start around K = 10). Always inspect the actual topic words after selecting K — a coherence-optimal K that produces uninterpretable topics is less useful than a slightly lower K with clearer themes.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Why does VADER give wrong sentiment scores on my texts?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p>VADER was designed for social media and informal English. It struggles with <strong>sarcasm</strong>, <strong>formal academic writing</strong>, <strong>domain-specific language</strong>, and <strong>non-English text</strong>. If your corpus uses specialised vocabulary or implied sentiment, switch to <strong>RoBERTa</strong> (requires Colab). For non-English text, neither model will perform reliably.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>What file formats are supported and which is fastest?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p><strong>TXT</strong> is fastest — plain text requires no parsing. <strong>XLSX</strong> is medium speed. <strong>PDF</strong> is slowest — the binary structure is parsed page by page, and scanned/image-based PDFs return empty text. Use the <strong>⚡ to TXT</strong> button next to any uploaded PDF to convert it client-side before running analysis.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Why is the Colab backend showing as unreachable?</span>
-            <span class="faq-arrow">+</span>
-          </div>
-          <div class="faq-a">
-            <p>ngrok URLs are <strong>session-based</strong> — they expire when the Colab runtime is idle or restarted. Each time you rerun the notebook, a new URL is generated. Click <strong>⚙ Advanced</strong>, paste the new URL from your Colab output, and click Test Connection. The Render backend for LDA/VADER is always-on but may take 30–60 seconds to wake from idle.</p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Privacy Notice -->
-      <div class="privacy-notice" style="margin-top:32px;">
-        <div class="privacy-header">
-          <span class="privacy-icon">🔒</span>
-          <span class="privacy-title">Privacy &amp; Data Notice</span>
-        </div>
-        <div class="privacy-body">
-          <p><strong>Your files never leave your session.</strong> All documents you upload are sent directly to the analysis backend solely for processing. No file content is stored, logged, or retained after the analysis completes. Results exist only in your browser and are discarded when you close or refresh the page.</p>
-          <p><strong>No personal data is collected.</strong> TopicMiner does not use cookies, does not track usage, and does not store any identifying information. There is no account system and no database. Each session is completely stateless.</p>
-          <p><strong>Colab backend:</strong> When using BERTopic via Google Colab, your documents are processed on a Google-provided virtual machine that you control. The Colab session and all its data are deleted when the runtime is terminated.</p>
-        </div>
-      </div>
-
-      <div style="height:20px"></div>
-    </div><!-- end collapsible-body -->
-  </div>
-
-  <!-- About -->
-  <div class="collapsible-section">
-    <div class="section-head" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">
-      <div class="collapsible-trigger" onclick="toggleSection(this,'aboutBody')" style="width:100%;border-bottom:2px solid var(--ink);padding-bottom:12px;">
-        <h2>About TopicMiner</h2>
-        <div style="display:flex;align-items:center;gap:16px;">
-          <span class="section-head-tag" style="margin-left:0">Research platform · Open tool</span>
-          <div class="collapsible-arrow">Show</div>
-        </div>
-      </div>
-    </div>
-    <div class="collapsible-body" id="aboutBody">
-      <div style="height:24px"></div>
-      <div class="about-grid">
-
-        <div class="about-block">
-          <div class="about-block-label">What is TopicMiner?</div>
-          <p>TopicMiner is a free, open-access NLP research platform built for academics, students, and researchers who need to extract structure and meaning from text corpora without requiring programming knowledge. It brings together five state-of-the-art analysis methods — BERTopic, LDA, TF-IDF, Word Cloud, and Sentiment Analysis — in a single unified interface, each grounded in peer-reviewed research and implemented according to best practices from the computational linguistics literature.</p>
-          <p>Unlike commercial tools such as MonkeyLearn, IBM Watson, or Google Cloud NLP, TopicMiner is entirely free, requires no API keys or subscriptions, and is designed specifically for academic and research use cases rather than business analytics. Every result is explainable and traceable back to the underlying model parameters.</p>
-        </div>
-
-        <div class="about-block">
-          <div class="about-block-label">Who is it for?</div>
-          <p>TopicMiner is designed for <strong>researchers and graduate students</strong> in linguistics, social sciences, education, communication, and any field that involves qualitative text analysis. It is particularly suited for thesis and dissertation work, where systematic, reproducible, and methodologically grounded text analysis is required but computational resources and programming expertise may be limited.</p>
-          <p>It is also useful for <strong>educators</strong> teaching NLP concepts, as the explainer panels provide academic citations and plain-language explanations of each method alongside the live analysis tool.</p>
-        </div>
-
-        <div class="about-block">
-          <div class="about-block-label">What makes it different?</div>
-          <ul class="about-list">
-            <li><strong>Research-grade methods</strong> — BERTopic with real BERT embeddings via GPU, not simplified approximations</li>
-            <li><strong>Academic citations</strong> — every method, parameter, and recommendation is grounded in peer-reviewed literature</li>
-            <li><strong>No code required</strong> — full NLP pipeline accessible through a clean web interface</li>
-            <li><strong>Transparent preprocessing</strong> — lemmatization, stopwords, n-grams, and all parameters are fully configurable and documented</li>
-            <li><strong>Completely free</strong> — no account, no subscription, no data collection</li>
-            <li><strong>Open architecture</strong> — built on FastAPI, scikit-learn, BERTopic, and Gensim; fully inspectable and extensible</li>
-          </ul>
-        </div>
-
-        <div class="about-block">
-          <div class="about-block-label">Built by</div>
-          <p><strong>Charalampos Mentsios</strong> — developed TopicMiner as a research tool to support NLP-based text analysis in academic settings. The platform was built from the ground up using FastAPI for the backend, deployed on Google Colab (GPU) and Render, with a custom HTML/CSS/JS frontend designed for clarity and usability in research contexts.</p>
-          <p>Feedback, suggestions, and collaboration inquiries are welcome via
-            <a href="https://www.linkedin.com/in/charalampos-mentsios" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(88,166,255,0.3);">LinkedIn</a>.
-          </p>
-          <div class="about-stack">
-            <span class="about-tech">FastAPI</span>
-            <span class="about-tech">BERTopic</span>
-            <span class="about-tech">scikit-learn</span>
-            <span class="about-tech">Gensim</span>
-            <span class="about-tech">NLTK</span>
-            <span class="about-tech">Render</span>
-            <span class="about-tech">Google Colab</span>
-            <span class="about-tech">PDF.js</span>
-          </div>
-        </div>
-
-      </div>
-      <div style="height:24px"></div>
-    </div><!-- end collapsible-body -->
-  </div>
-
-  </div><!-- end collapsible block wrapper -->
-
   <!-- Footer -->
   <div class="footer">
-    <div class="footer-left">
-      <div class="footer-copy">TopicMiner NLP Platform · Open Research Tool · v2.0</div>
-      <div class="footer-author">
-        Built by <span class="footer-name">Charalampos Mentsios</span>
-        <a class="footer-linkedin" href="https://www.linkedin.com/in/charalampos-mentsios" target="_blank" rel="noopener">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn
-        </a>
-      </div>
-    </div>
+    <div class="footer-copy">TopicMiner NLP Platform · Open Research Tool · v2.0</div>
     <div class="footer-methods">
       <span class="footer-method">BERTopic</span>
       <span class="footer-method">LDA</span>
@@ -2896,6 +2321,7 @@ input[type=range]:active { cursor: grabbing; }
       <span class="footer-method">RoBERTa</span>
       <span class="footer-method">Gensim</span>
     </div>
+    </div><!-- end collapsible-body -->
   </div>
 
 </div>
@@ -3103,121 +2529,11 @@ function renderFiles() {
     const ext = f.name.split('.').pop().toLowerCase();
     const size = f.size < 1024*1024 ? (f.size/1024).toFixed(1)+'KB' : (f.size/1024/1024).toFixed(1)+'MB';
     const el = document.createElement('div'); el.className='file-item';
-
-    let actionBtn = '';
-    if (convertedFiles[i]) {
-      actionBtn = `<button class="file-convert done" onclick="downloadTxt(${i})" title="Download converted TXT">⬇ download</button>`;
-    } else if (ext === 'pdf') {
-      actionBtn = `<button class="file-convert" id="conv-${i}" onclick="convertPdfToTxt(${i})" title="Convert to TXT for faster analysis">⚡ to TXT</button>`;
-    }
-
-    el.innerHTML=`<span class="file-icon">${iconMap[ext]||'📄'}</span><span class="file-name">${f.name}</span><span class="file-size">${size}</span>${actionBtn}<button class="file-remove" onclick="removeFile(${i})">✕</button>`;
+    el.innerHTML=`<span class="file-icon">${iconMap[ext]||'📄'}</span><span class="file-name">${f.name}</span><span class="file-size">${size}</span><button class="file-remove" onclick="removeFile(${i})">✕</button>`;
     fl.appendChild(el);
   });
-
-  // Show "Download All as TXT" only if there are any converted files
-  const hasConverted = Object.keys(convertedFiles).length > 0;
-  const wrap = document.getElementById('downloadAllWrap');
-  if (wrap) wrap.style.display = hasConverted ? 'block' : 'none';
 }
-function removeFile(i) {
-  delete convertedFiles[i];
-  uploadedFiles.splice(i,1);
-  renderFiles();
-  updateMtsAdvisor();
-}
-function downloadTxt(i) {
-  const f = convertedFiles[i];
-  if (!f) return;
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(f);
-  a.download = f.name;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-function downloadAllTxt() {
-  const files = Object.values(convertedFiles);
-  if (!files.length) return;
-  // Download each with a small delay so browser doesn't block multiple downloads
-  files.forEach((f, i) => {
-    setTimeout(() => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(f);
-      a.download = f.name;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }, i * 300);
-  });
-  showToast(`⬇ Downloading ${files.length} TXT file${files.length > 1 ? 's' : ''}…`);
-}
-
-// ── PDF → TXT conversion (client-side via PDF.js) ──
-const convertedFiles = {}; // idx → txtFile, persists across re-renders
-
-async function convertPdfToTxt(idx) {
-  const file = uploadedFiles[idx];
-  const btn = document.getElementById('conv-'+idx);
-  if (!btn) return;
-
-  btn.disabled = true;
-  btn.classList.add('converting');
-  btn.textContent = '⏳ converting…';
-
-  try {
-    // Set PDF.js worker
-    if (typeof pdfjsLib === 'undefined') throw new Error('PDF.js not loaded');
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-
-    let fullText = '';
-    for (let p = 1; p <= pdf.numPages; p++) {
-      const page = await pdf.getPage(p);
-      const content = await page.getTextContent();
-      const pageText = content.items.map(item => item.str).join(' ');
-      fullText += pageText + '\n\n';
-    }
-
-    if (!fullText.trim()) throw new Error('No text found — PDF may be scanned/image-based');
-
-    // Create a new .txt File object
-    const txtName = file.name.replace(/\.pdf$/i, '.txt');
-    const txtFile = new File([fullText], txtName, { type: 'text/plain' });
-
-    // Replace the PDF in uploadedFiles with the TXT
-    uploadedFiles[idx] = txtFile;
-    convertedFiles[idx] = txtFile; // remember for re-renders
-
-    btn.classList.remove('converting');
-    btn.classList.add('done');
-    btn.textContent = '✓ converted';
-    btn.disabled = true;
-
-    // Insert a download button right after the convert button
-    const dlBtn = document.createElement('button');
-    dlBtn.className = 'file-convert done';
-    dlBtn.textContent = '⬇ download';
-    dlBtn.title = 'Download converted TXT file';
-    dlBtn.onclick = () => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(txtFile);
-      a.download = txtName;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    };
-    btn.insertAdjacentElement('afterend', dlBtn);
-
-    showToast(`✓ ${file.name} → ${txtName}`);
-
-  } catch(e) {
-    btn.classList.remove('converting');
-    btn.textContent = '⚡ to TXT';
-    btn.disabled = false;
-    showToast('⚠ ' + (e.message || 'Conversion failed'));
-  }
-}
+function removeFile(i) { uploadedFiles.splice(i,1); renderFiles(); }
 
 fileInput.addEventListener('change', e => {
   const existing = new Set(uploadedFiles.map(f=>f.name+f.size));
@@ -3225,7 +2541,6 @@ fileInput.addEventListener('change', e => {
   uploadedFiles = [...uploadedFiles, ...newFiles];
   if (newFiles.length < e.target.files.length) showError((e.target.files.length-newFiles.length)+' duplicate(s) skipped.');
   renderFiles();
-  updateMtsAdvisor();
 });
 dropZone.addEventListener('dragover', e=>{e.preventDefault();dropZone.classList.add('drag');});
 dropZone.addEventListener('dragleave', ()=>dropZone.classList.remove('drag'));
@@ -3233,139 +2548,8 @@ dropZone.addEventListener('drop', e=>{
   e.preventDefault(); dropZone.classList.remove('drag');
   const existing = new Set(uploadedFiles.map(f=>f.name+f.size));
   const newFiles = [...e.dataTransfer.files].filter(f=>!existing.has(f.name+f.size));
-  uploadedFiles=[...uploadedFiles,...newFiles]; renderFiles(); updateMtsAdvisor();
+  uploadedFiles=[...uploadedFiles,...newFiles]; renderFiles();
 });
-
-// ── Min Topic Size Advisor ────────────────────────────────────────────────────
-function updateMtsAdvisor() {
-  const advisor  = document.getElementById('mtsAdvisor');
-  const icon     = document.getElementById('mtsIcon');
-  const title    = document.getElementById('mtsTitle');
-  const behavior = document.getElementById('mtsBehavior');
-  const rec      = document.getElementById('mtsRec');
-  const presets  = document.getElementById('mtsPresets');
-  if (!advisor) return;
-
-  const mts   = parseInt(document.getElementById('btMin').value) || 5;
-  const nDocs = uploadedFiles.length;
-
-  // ── Compute suggested values based on doc count ──
-  // Rule of thumb: ~2–5% of docs, with sensible floor/ceiling
-  const micro    = Math.max(2,  Math.round(nDocs * 0.02));
-  const balanced = Math.max(5,  Math.round(nDocs * 0.05));
-  const broad    = Math.max(10, Math.round(nDocs * 0.10));
-
-  // ── Describe current behavior ──
-  let iconStr, behaviorText, recText, stateClass;
-
-  if (mts <= 3) {
-    iconStr      = '🔬';
-    behaviorText = 'Detects micro-topics (noise risk)';
-    recText      = 'Clusters form from just ' + mts + ' documents — HDBSCAN will pick up very specific but potentially meaningless patterns. Expect many noisy or one-off topics mixed in with real ones. Only use this on very large, diverse corpora.';
-    stateClass   = 'warn';
-  } else if (mts <= 8) {
-    iconStr      = '⚖️';
-    behaviorText = 'Semi-stable topics';
-    recText      = 'Topics need at least ' + mts + ' documents to form — a reasonable starting point that captures specific themes without too much noise. Good for medium-sized corpora where you want detailed, specific topics.';
-    stateClass   = 'good';
-  } else if (mts <= 15) {
-    iconStr      = '✅';
-    behaviorText = 'Optimal — stable, meaningful topics';
-    recText      = 'The sweet spot. Topics require solid document support to emerge, filtering out noise while preserving real thematic clusters. Recommended for most corpora.';
-    stateClass   = 'good';
-  } else if (mts <= 19) {
-    iconStr      = '📚';
-    behaviorText = 'Broad topics only';
-    recText      = 'Only dominant, well-represented themes will surface. Smaller or niche topics will be absorbed into the outlier (-1) group. Use this when you specifically want high-level themes.';
-    stateClass   = nDocs > 0 && mts > nDocs * 0.3 ? 'warn' : '';
-  } else {
-    iconStr      = '🚨';
-    behaviorText = 'Too aggressive — most docs become outliers';
-    recText      = 'Min topic size of ' + mts + ' is very high. Unless your corpus has hundreds of documents per theme, HDBSCAN will reject most clusters and dump them into noise. Lower this to get meaningful results.';
-    stateClass   = 'bad';
-  }
-
-  // ── Corpus-aware warning overlay ──
-  if (nDocs === 0) {
-    recText = 'Upload files first and this panel will give you personalised suggestions based on your corpus size.';
-    stateClass = '';
-  } else if (mts >= nDocs * 0.5) {
-    iconStr      = '🚨';
-    behaviorText = 'Too large for your corpus';
-    recText      = 'Min topic size of ' + mts + ' is ≥ 50% of your ' + nDocs + ' document(s). HDBSCAN will likely produce 0–1 topics. Reduce it significantly.';
-    stateClass   = 'bad';
-  }
-
-  // ── Render ──
-  advisor.className = 'mts-advisor' + (stateClass ? ' ' + stateClass : '');
-  icon.textContent  = iconStr;
-  behavior.textContent = behaviorText;
-  rec.textContent   = recText;
-
-  // ── Preset buttons ──
-  presets.innerHTML = '';
-  const suggestions = nDocs > 0
-    ? [
-        { val: micro,        label: 'Micro',       sub: 'noise risk' },
-        { val: balanced,     label: 'Semi-stable',  sub: 'detailed' },
-        { val: broad,        label: 'Optimal',      sub: 'recommended' },
-        { val: Math.max(20, Math.round(nDocs * 0.20)), label: 'Aggressive', sub: 'broad only' },
-      ]
-    : [
-        { val: 3,  label: 'Micro',       sub: 'noise risk' },
-        { val: 8,  label: 'Semi-stable', sub: 'detailed' },
-        { val: 15, label: 'Optimal',     sub: 'recommended' },
-        { val: 20, label: 'Aggressive',  sub: 'broad only' },
-      ];
-
-  suggestions.forEach(s => {
-    const btn = document.createElement('button');
-    btn.className = 'mts-preset-btn' + (s.val === mts ? ' active' : '');
-    btn.innerHTML = s.val + '<span>' + s.label + ' · ' + s.sub + '</span>';
-    btn.onclick = () => {
-      const slider = document.getElementById('btMin');
-      slider.value = s.val;
-      document.getElementById('btMinVal').textContent = s.val;
-      updateRange(slider);
-      updateMtsAdvisor();
-    };
-    presets.appendChild(btn);
-  });
-}
-
-// Call advisor on page load and whenever files change
-document.addEventListener('DOMContentLoaded', updateMtsAdvisor);
-
-// ── FAQ ──────────────────────────────────────────────────────────────────────
-function toggleFaq(qEl) {
-  const item = qEl.parentElement;
-  const isOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
-  if (!isOpen) item.classList.add('open');
-}
-
-const PRESET_URLS = {
-  colab:  'https://nonbilabiate-nondialectal-denis.ngrok-free.dev',
-  render: 'https://textmine-backend.onrender.com'
-};
-
-// Methods that need Colab/GPU
-const COLAB_METHODS = new Set(['bertopic', 'tfidf']);
-function needsColab(method) {
-  if (COLAB_METHODS.has(method)) return true;
-  if (method === 'sentiment') {
-    return document.getElementById('sentModel')?.value === 'roberta';
-  }
-  return false;
-}
-
-function autoSwitchUrl() {
-  const target = needsColab(activeMethod) ? 'colab' : 'render';
-  const input = document.getElementById('apiUrl');
-  input.value = PRESET_URLS[target];
-  localStorage.setItem('textmine_api_url', input.value);
-  pingApi();
-}
 
 // ── Methods ──
 document.querySelectorAll('.method-card').forEach(card => {
@@ -3396,25 +2580,15 @@ function switchTab(tab,btn){
   document.getElementById('tabRaw').style.display=tab==='raw'?'':'none';
 }
 
-function toggleAdvanced() {
-  const bar = document.getElementById('apiBar');
-  const btn = document.getElementById('advancedToggle');
-  const open = bar.style.display === 'none';
-  bar.style.display = open ? 'flex' : 'none';
-  btn.classList.toggle('open', open);
-}
-
 // ── API ──
 function getApiUrl(){return document.getElementById('apiUrl').value.replace(/\/$/,'');}
 
 async function pingApi() {
   const status = document.getElementById('apiStatus');
-  const txt    = document.getElementById('apiStatusText');
   const url    = getApiUrl();
   const isRender = url.includes('onrender.com');
 
   status.className = 'api-status pinging';
-  if (txt) { txt.textContent = 'connecting…'; txt.className = 'api-status-text'; }
 
   const maxTries = isRender ? 4 : 2;
   for (let i = 0; i < maxTries; i++) {
@@ -3425,7 +2599,6 @@ async function pingApi() {
       });
       if (res.ok) {
         status.className = 'api-status ok';
-        if (txt) { txt.textContent = 'connected'; txt.className = 'api-status-text ok'; }
         return;
       }
     } catch(e) {
@@ -3436,7 +2609,6 @@ async function pingApi() {
     }
   }
   status.className = 'api-status err';
-  if (txt) { txt.textContent = 'unreachable'; txt.className = 'api-status-text err'; }
 }
 
 // ── Progress ──
@@ -3801,7 +2973,6 @@ const renderers={bertopic:renderTopics,lda:renderTopics,tfidf:renderTfidf,wordfr
 
 // ── Run Analysis ──
 async function runAnalysis(){
-  autoSwitchUrl(); // silently set correct URL before running
   if(!uploadedFiles.length){showError('Please upload at least one file.');return;}
   if(activeMethod==='bertopic'){
     const url=getApiUrl();
@@ -3998,11 +3169,7 @@ const EXPLAINERS = {
     col2: `
       <p><strong>When to use:</strong> BERTopic excels on larger corpora of 500 or more documents where semantic relationships matter. It handles polysemy correctly — the word "bank" will be assigned to the right context (financial vs. river bank) based on surrounding words. It is particularly effective for scientific abstracts, news articles, and social media corpora.</p>
       <p><strong>Key parameters:</strong> The <em>nr_topics</em> parameter sets a target number of topics; setting it to "auto" lets HDBSCAN decide organically. The <em>min_topic_size</em> controls the minimum number of documents a cluster must contain before it is recognized as a topic — smaller values find more fine-grained topics but risk noise. The <em>reduce_outliers</em> option reassigns the -1 noise cluster (documents HDBSCAN could not place) to the nearest topic by cosine similarity.</p>
-      <p><strong>Limitation:</strong> Generating BERT embeddings requires significant computational resources. Grootendorst (2022) recommends GPU acceleration, which is why the Google Colab backend with T4 GPU is necessary for this method. Processing 1,000 documents typically takes 30–120 seconds depending on hardware.</p>`,
-    pitfalls: `
-      <p><strong>Very short documents degrade quality.</strong> BERT embeddings rely on sufficient context to capture meaning. Grootendorst (2022) notes that documents shorter than 10–15 words — such as isolated tweets or single-sentence fragments — do not provide enough context for the transformer to produce meaningful representations. If your corpus consists of very short texts, concatenate related documents or use LDA instead.</p>
-      <p><strong>High outlier (-1) counts signal a min_topic_size that is too large.</strong> If more than 20–30% of your documents land in the noise topic, reduce min_topic_size. Conversely, if you see dozens of near-identical micro-topics, increase it. The Reduce Outliers option can help reassign noise documents after clustering.</p>
-      <p><strong>Non-English corpora need the multilingual model.</strong> The default all-MiniLM-L6-v2 embedding model is English-optimized. Running it on Greek, Spanish, or other languages will produce poor semantic groupings. Always select the matching language option or use Multilingual for mixed-language corpora.</p>`
+      <p><strong>Limitation:</strong> Generating BERT embeddings requires significant computational resources. Grootendorst (2022) recommends GPU acceleration, which is why the Google Colab backend with T4 GPU is necessary for this method. Processing 1,000 documents typically takes 30–120 seconds depending on hardware.</p>`
   },
   lda: {
     title: 'Latent Dirichlet Allocation',
@@ -4015,11 +3182,7 @@ const EXPLAINERS = {
     col2: `
       <p><strong>When to use:</strong> LDA is the standard choice for corpora of 50 to 10,000 documents where computational efficiency is important and GPU resources are unavailable. It is fully interpretable, well-studied, and supported by an extensive body of research on evaluation and preprocessing best practices.</p>
       <p><strong>Preprocessing recommendations from the literature:</strong> Blei et al. (2003) recommend removing high-frequency function words (stopwords) before modeling. Schofield & Mimno (2016) demonstrated in a large empirical study that lemmatization consistently improves topic coherence by 8–12%, while stemming — despite reducing vocabulary size — often <em>reduces</em> coherence because it conflates morphologically distinct but semantically different word forms. Both Schofield & Mimno (2016) and Boyd-Graber et al. (2017) advise against stemming for human-interpretable topic models.</p>
-      <p><strong>The α hyperparameter</strong> controls document-topic sparsity. Low α values (below 0.1) produce documents concentrated on very few topics. High α values (above 1.0) produce flat, uniform topic distributions. The "auto" setting uses empirical Bayes estimation and is recommended by Wallach et al. (2009) as the most robust default.</p>`,
-    pitfalls: `
-      <p><strong>Choosing K: use the coherence tool, not guesswork.</strong> Griffiths & Steyvers (2004) provide a useful starting heuristic — try K ≈ √(N/2) where N is the number of documents — but always validate with coherence scores. If the optimal K lands at the boundary of your tested range (e.g. the highest K you tested), extend the range further; you may not have found the true peak yet.</p>
-      <p><strong>Top words that look identical across topics</strong> indicate your max_df is too high (overly common words pass through) or your corpus needs domain-specific stopwords. Add the repeated words to Custom Stopwords and rerun.</p>
-      <p><strong>Empty or near-empty topics</strong> (1–2 documents) mean min_df is too low or K is too high for your corpus size. Increase min_df or reduce K.</p>`
+      <p><strong>The α hyperparameter</strong> controls document-topic sparsity. Low α values (below 0.1) produce documents concentrated on very few topics. High α values (above 1.0) produce flat, uniform topic distributions. The "auto" setting uses empirical Bayes estimation and is recommended by Wallach et al. (2009) as the most robust default.</p>`
   },
   tfidf: {
     title: 'TF-IDF',
@@ -4033,11 +3196,7 @@ const EXPLAINERS = {
       <p><strong>When to use:</strong> TF-IDF is ideal for keyword extraction and identifying the most representative terms across a corpus. Unlike LDA it does not model latent thematic structure — it ranks terms by statistical importance, making it complementary to topic modeling rather than a replacement.</p>
       <p><strong>Sublinear TF scaling:</strong> TopicMiner applies sublinear term frequency scaling, replacing raw counts with their logarithm. Manning et al. (2008) show that raw TF overpowers IDF for high-frequency terms, and that logarithmic scaling produces more balanced, interpretable rankings by compressing the dynamic range of term frequencies.</p>
       <p><strong>Distinctive Mode</strong> addresses a known problem with standard TF-IDF on small or homogeneous corpora where many terms receive the maximum possible score. This mode applies an additional penalty proportional to a term's document frequency — terms that appear in many documents are down-weighted even if their per-document score is high. This rewards terms that are both important within a document and distinctive across the corpus.</p>
-      <p><strong>N-grams:</strong> Extending to bigrams (n=2) captures meaningful multi-word expressions. Manning et al. (2008) note that phrase-level indexing substantially improves precision for domain-specific corpora where compound terms such as "machine learning" or "climate change" carry meaning that unigram analysis would fragment.</p>`,
-    pitfalls: `
-      <p><strong>All top terms are domain-wide words</strong> (e.g. "university", "student", "program" appearing in every document of an academic corpus) — this means max_df is too high. Lower it to 0.7–0.8 to exclude terms that appear in more than 70–80% of documents. Alternatively, add these terms directly to Custom Stopwords.</p>
-      <p><strong>Results look sparse or nearly empty</strong> — min_df is too strict. If you have a small corpus (under 30 documents), set min_df to 1 so that terms appearing in even a single document are considered.</p>
-      <p><strong>TF-IDF is not a topic model.</strong> It ranks terms by statistical distinctiveness but does not group them into themes. If your goal is to understand what subjects your corpus covers rather than which terms are most important, use LDA or BERTopic instead. TF-IDF and topic modeling are complementary — run both for the fullest picture.</p>`
+      <p><strong>N-grams:</strong> Extending to bigrams (n=2) captures meaningful multi-word expressions. Manning et al. (2008) note that phrase-level indexing substantially improves precision for domain-specific corpora where compound terms such as "machine learning" or "climate change" carry meaning that unigram analysis would fragment.</p>`
   },
   wordcloud: {
     title: 'Word Cloud Visualization',
@@ -4050,11 +3209,7 @@ const EXPLAINERS = {
     col2: `
       <p><strong>Interpreting the clouds:</strong> Each cloud represents one latent topic discovered by LDA. The largest, most centrally placed words are the topic's core defining terms. Smaller peripheral words are present in the topic but with lower probability. When two clouds share large words — particularly generic ones like "good", "bad", or domain terms — this is a signal that your corpus requires additional domain-specific stopwords or that the number of topics should be increased.</p>
       <p><strong>Recommended settings based on the literature:</strong> Schofield & Mimno (2016) recommend enabling lemmatization for word cloud visualization specifically, because uninflected base forms are more readable than stemmed variants. Boyd-Graber et al. (2017) advise adding corpus-specific stopwords iteratively — run once, identify the most generic high-frequency terms, add them as custom stopwords, and rerun. Typically two to three such iterations produce significantly cleaner topic representations.</p>
-      <p><strong>Limitation:</strong> Word clouds are qualitative tools. They communicate thematic structure intuitively but do not quantify topic quality. Always validate word cloud results with the Coherence Score calculator, which provides a statistically grounded measure of topic interpretability.</p>`,
-    pitfalls: `
-      <p><strong>Clouds that look almost identical</strong> are the most common signal of a problem. When two or more clouds share the same large central words, it means either K is too high (topics are being artificially split) or domain stopwords are missing. Add the shared words to Custom Stopwords and rerun, or reduce K by 2–3.</p>
-      <p><strong>One enormous cloud and several tiny ones</strong> indicates an imbalanced corpus — one theme dominates the documents. This is not an error; it reflects your data. Consider filtering or balancing your corpus if you want equal representation across themes.</p>
-      <p><strong>Words are cut off or overlapping in the cloud.</strong> This is a layout issue caused by very long words or a large number of words per topic. Reduce the Words per Cloud slider or increase min_word_len to filter out short tokens that inflate the word count.</p>`
+      <p><strong>Limitation:</strong> Word clouds are qualitative tools. They communicate thematic structure intuitively but do not quantify topic quality. Always validate word cloud results with the Coherence Score calculator, which provides a statistically grounded measure of topic interpretability.</p>`
   },
   sentiment: {
     title: 'Sentiment Analysis',
@@ -4067,11 +3222,7 @@ const EXPLAINERS = {
     col2: `
       <p>RoBERTa (Liu et al., 2019) is a transformer language model trained on 160GB of text data using an optimized BERT pretraining procedure. The specific model used in TopicMiner — cardiffnlp/twitter-roberta-base-sentiment — was fine-tuned on approximately 124 million tweets by Barbieri et al. (2020) as part of the TweetEval benchmark, making it particularly well-suited for short, informal, and expressive text.</p>
       <p>Barbieri et al. (2020) demonstrated that this model substantially outperforms rule-based approaches including VADER on ambiguous, ironic, and context-dependent text. The model processes text as a sequence of subword tokens and applies multi-head self-attention to model long-range contextual dependencies, enabling it to correctly classify sentences where the sentiment is expressed implicitly or through figurative language.</p>
-      <p><strong>When to choose which model:</strong> Hutto & Gilbert (2014) note that VADER was designed for texts where sentiment is expressed explicitly and directly. For corpora with complex language, sarcasm, negation across clause boundaries, or domain-specific sentiment vocabulary, RoBERTa consistently produces higher accuracy at the cost of requiring GPU acceleration. VADER processes approximately 10,000 sentences per second; RoBERTa processes approximately 200 per second on GPU.</p>`,
-    pitfalls: `
-      <p><strong>VADER struggles with sarcasm, irony, and domain slang.</strong> Because VADER is lexicon-based, it cannot detect sentiment that contradicts the literal word meanings. "This is just great" said sarcastically scores as positive. Similarly, domain-specific terms like "sick" (meaning excellent), "wicked" (meaning impressive), or field-specific negative terms will be misclassified. For such corpora, switch to RoBERTa.</p>
-      <p><strong>Very long documents give misleading averages.</strong> TopicMiner scores sentiment at the sentence level and averages across the document. A report that is mostly neutral with one strongly negative conclusion will show a near-neutral average score. Review the sentence-level table to identify where sentiment concentrates rather than relying solely on the summary percentages.</p>
-      <p><strong>Academic, legal, or technical language confuses both models.</strong> Formal writing tends to score as neutral even when the content carries implicit negative or positive judgment. Neither VADER nor the RoBERTa model was trained on such text. Interpret results from formal corpora with caution and treat the compound scores as indicative rather than definitive.</p>`
+      <p><strong>When to choose which model:</strong> Hutto & Gilbert (2014) note that VADER was designed for texts where sentiment is expressed explicitly and directly. For corpora with complex language, sarcasm, negation across clause boundaries, or domain-specific sentiment vocabulary, RoBERTa consistently produces higher accuracy at the cost of requiring GPU acceleration. VADER processes approximately 10,000 sentences per second; RoBERTa processes approximately 200 per second on GPU.</p>`
   },
   coherence: {
     title: 'Topic Coherence Analysis',
@@ -4084,11 +3235,7 @@ const EXPLAINERS = {
     col2: `
       <p><strong>How to read the chart:</strong> The bar chart displays coherence scores across the tested range of K values. A higher bar indicates more semantically coherent topics at that K. The optimal K — marked with a star — is the value producing the highest average coherence across all topics. The perplexity line shows statistical fit; it typically decreases as K increases, illustrating why perplexity alone is insufficient for model selection.</p>
       <p><strong>Practical guidance from the literature:</strong> Röder et al. (2015) found that coherence typically peaks sharply then plateaus or declines. Boyd-Graber et al. (2017) recommend selecting K at the first significant peak rather than a global maximum, as very high K values often produce redundant or artificially split topics. Mimno et al. (2011) note that the optimal K is corpus-dependent and should be interpreted in light of domain knowledge — a coherence-optimal K of 12 may produce topics that are too fine-grained for a summary analysis but appropriate for detailed exploration.</p>
-      <p><strong>Rule of thumb:</strong> For corpora under 200 documents, test K from 2 to 15. For larger corpora of 500 or more documents, test K from 5 to 30. The coherence calculation requires fitting one LDA model per K value, so wider ranges increase computation time proportionally.</p>`,
-    pitfalls: `
-      <p><strong>Optimal K at the boundary of your tested range is a warning sign.</strong> Griffiths & Steyvers (2004) emphasize that if coherence is still rising at your maximum tested K, the true optimum has not been found yet — extend the range upward. Similarly, if the peak is at your minimum K, try testing lower values. A peak at the edge almost always means the search range was too narrow.</p>
-      <p><strong>Coherence alone is not sufficient.</strong> Boyd-Graber et al. (2017) caution that a coherence-optimal K may still produce topics that are semantically redundant or domain-irrelevant. Always inspect the actual topic words after selecting K — coherence is a guide, not a verdict. A K that is slightly below the coherence peak but produces more interpretable topics is often the better practical choice.</p>
-      <p><strong>Small corpora produce unreliable coherence scores.</strong> C_V coherence relies on word co-occurrence statistics. With fewer than 50 documents, these statistics are sparse and noisy, making the coherence curve erratic. Mimno et al. (2011) recommend using at least 100 documents for stable coherence estimation.</p>`
+      <p><strong>Rule of thumb:</strong> For corpora under 200 documents, test K from 2 to 15. For larger corpora of 500 or more documents, test K from 5 to 30. The coherence calculation requires fitting one LDA model per K value, so wider ranges increase computation time proportionally.</p>`
   }
 };
 
@@ -4116,7 +3263,6 @@ function toggleExplainer(key, btn) {
     <div class="explainer-grid">
       <div class="explainer-body">${ex.col1}</div>
       <div class="explainer-body">${ex.col2}</div>
-      ${ex.pitfalls ? `<div class="explainer-pitfalls"><div class="explainer-pitfalls-title">⚠ Common pitfalls</div>${ex.pitfalls}</div>` : ''}
     </div>`;
 
   panel.classList.add('open');
@@ -4258,45 +3404,8 @@ function exportTXT() {
 
 function exportPDF() {
   document.getElementById('exportMenu').classList.remove('open');
-
-  // Inject a print-only header into the results panel
-  const rp = document.getElementById('resultsPanel');
-  if (!rp) { window.print(); return; }
-
-  // Remove any existing print header
-  const existing = document.getElementById('printHeader');
-  if (existing) existing.remove();
-
-  const method = lastResultData ? lastResultData.method.toUpperCase() : '';
-  const header = document.createElement('div');
-  header.id = 'printHeader';
-  header.style.cssText = 'display:none;';
-  header.innerHTML = `
-    <div style="border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:20px;">
-      <div style="font-family:Georgia,serif;font-size:22pt;font-weight:900;color:#111;">TopicMiner</div>
-      <div style="font-family:monospace;font-size:9pt;color:#555;letter-spacing:.15em;text-transform:uppercase;margin-top:3px;">
-        ${method} Results · ${new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}
-      </div>
-    </div>`;
-  rp.insertBefore(header, rp.firstChild);
-
-  // Show header only during print
-  const style = document.createElement('style');
-  style.id = 'printHeaderStyle';
-  style.textContent = '@media print { #printHeader { display:block !important; } }';
-  document.head.appendChild(style);
-
   showToast('Opening print dialog…', 1500);
-  setTimeout(() => {
-    window.print();
-    // Clean up after print dialog closes
-    setTimeout(() => {
-      const h = document.getElementById('printHeader');
-      const s = document.getElementById('printHeaderStyle');
-      if (h) h.remove();
-      if (s) s.remove();
-    }, 2000);
-  }, 400);
+  setTimeout(() => window.print(), 600);
 }
 
 // ── Copy buttons ──
@@ -4342,6 +3451,168 @@ function copyTopicWords(topicId, words) {
     showToast(`✓ Topic ${topicId} words copied`);
   });
 }
+
+// ── AI Evaluation Chat ────────────────────────────────────────────────────────
+
+const AI_EVAL_METHODS = new Set(["lda", "bertopic", "sentiment"]);
+let aiEvalHistory = [];
+let aiEvalOpen    = false;
+let aiEvalStarted = false;
+
+function buildResultsSummary() {
+  if (!lastResultData) return "";
+  const { method, data } = lastResultData;
+  let s = "Method: " + method.toUpperCase() + "
+";
+  if (method === "lda" || method === "bertopic") {
+    s += "Documents: " + data.num_docs + " | Topics: " + data.num_topics;
+    if (data.vocab_size) s += " | Vocab: " + data.vocab_size;
+    s += "
+
+";
+    data.topics.forEach(t => {
+      s += "Topic " + t.topic_id + " (" + t.count + " docs): " + t.words.map(w => w.word).join(", ") + "
+";
+    });
+  } else if (method === "sentiment") {
+    const sum = data.summary;
+    s += "Sentences: " + sum.total_sentences + " | Model: " + sum.model_used + "
+";
+    s += "Positive: " + sum.positive_pct + "% | Neutral: " + sum.neutral_pct + "% | Negative: " + sum.negative_pct + "%
+";
+    s += "Avg compound: " + sum.avg_compound + "
+
+Sample sentences:
+";
+    data.sentences.slice(0, 20).forEach(r => {
+      s += "[" + r.label.toUpperCase() + "] " + r.compound.toFixed(3) + " — " + r.sentence + "
+";
+    });
+  }
+  return s;
+}
+
+function buildSystemPrompt() {
+  const { method } = lastResultData;
+  const methodLabel = method === "sentiment" ? "Sentiment Analysis" : method.toUpperCase() + " topic modeling";
+  return "You are an expert NLP analyst embedded in TopicMiner, a research-grade text analysis platform. The user has just run " + methodLabel + " on their corpus and you are helping them interpret and evaluate the results. Be concise, direct, and academically rigorous. Reference specific topics or scores from the results where relevant. When suggesting improvements (stopwords, parameter tuning, etc.) be specific. Keep responses under 250 words unless the question requires more depth. Do not use markdown headers — write in clean flowing prose.";
+}
+
+function addEvalMessage(role, text, isThinking) {
+  const msgs = document.getElementById("aiEvalMessages");
+  const wrap = document.createElement("div");
+  wrap.className = "eval-msg";
+  const label = document.createElement("div");
+  label.className = "eval-msg-label " + role;
+  label.textContent = role === "assistant" ? "✦ Claude" : "You";
+  const body = document.createElement("div");
+  body.className = "eval-msg-body " + (isThinking ? "thinking" : role);
+  body.textContent = isThinking ? "Analysing results" : text;
+  wrap.appendChild(label);
+  wrap.appendChild(body);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+  return body;
+}
+
+async function runAiEval(userMessage) {
+  const sendBtn = document.getElementById("aiEvalSend");
+  const input   = document.getElementById("aiEvalInput");
+  sendBtn.disabled = true;
+  input.disabled   = true;
+  if (userMessage) {
+    aiEvalHistory.push({ role: "user", content: userMessage });
+    addEvalMessage("user", userMessage, false);
+  }
+  const thinkingEl = addEvalMessage("assistant", "", true);
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
+        messages: aiEvalHistory
+      })
+    });
+    const d = await response.json();
+    const reply = (d.content && d.content[0] && d.content[0].text) ? d.content[0].text : "No response received.";
+    thinkingEl.className   = "eval-msg-body assistant";
+    thinkingEl.textContent = reply;
+    aiEvalHistory.push({ role: "assistant", content: reply });
+    document.getElementById("aiEvalMessages").scrollTop = 999999;
+  } catch(err) {
+    thinkingEl.className   = "eval-msg-body assistant";
+    thinkingEl.textContent = "Error reaching Claude API: " + err.message;
+  } finally {
+    sendBtn.disabled = false;
+    input.disabled   = false;
+    input.focus();
+  }
+}
+
+function toggleAiEval() {
+  const panel = document.getElementById("aiEvalPanel");
+  const btn   = document.getElementById("aiEvalBtn");
+  aiEvalOpen  = !aiEvalOpen;
+  panel.classList.toggle("open", aiEvalOpen);
+  btn.classList.toggle("active", aiEvalOpen);
+  if (aiEvalOpen) {
+    setTimeout(() => panel.scrollIntoView({ behavior: "smooth", block: "nearest" }), 100);
+    if (!aiEvalStarted && lastResultData) {
+      aiEvalStarted = true;
+      const summary = buildResultsSummary();
+      aiEvalHistory = [{ role: "user", content: "Please evaluate these NLP analysis results and give me an opening assessment:
+
+" + summary }];
+      runAiEval(null);
+    }
+  }
+}
+
+function sendAiEvalMsg() {
+  const input = document.getElementById("aiEvalInput");
+  const msg   = input.value.trim();
+  if (!msg) return;
+  input.value = "";
+  input.style.height = "";
+  if (aiEvalHistory.length === 0) {
+    aiEvalHistory = [{ role: "user", content: "Here are the NLP analysis results for context:
+
+" + buildResultsSummary() },
+                     { role: "assistant", content: "Ready to help." }];
+  }
+  aiEvalHistory.push({ role: "user", content: msg });
+  runAiEval(msg);
+}
+
+function updateAiEvalVisibility() {
+  const btn = document.getElementById("aiEvalBtn");
+  if (btn) btn.style.display = AI_EVAL_METHODS.has(activeMethod) ? "" : "none";
+}
+
+["lda","bertopic","sentiment"].forEach(m => {
+  const orig = renderers[m];
+  renderers[m] = function(data) {
+    aiEvalHistory = []; aiEvalStarted = false; aiEvalOpen = false;
+    const panel = document.getElementById("aiEvalPanel");
+    const btn   = document.getElementById("aiEvalBtn");
+    if (panel) { panel.classList.remove("open"); document.getElementById("aiEvalMessages").innerHTML = ""; }
+    if (btn)   { btn.classList.remove("active"); btn.style.display = ""; }
+    orig(data);
+  };
+});
+
+document.querySelectorAll(".method-card").forEach(card => {
+  card.addEventListener("click", updateAiEvalVisibility);
+});
+updateAiEvalVisibility();
+
+document.getElementById("aiEvalInput").addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = Math.min(this.scrollHeight, 100) + "px";
+});
 
 </script>
 <div class="toast" id="toast"></div>
