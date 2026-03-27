@@ -2696,13 +2696,9 @@ input[type=range]:active { cursor: grabbing; }
         </div>
       </div>
 
-      <!-- hidden runBtn kept for JS refs -->
-      <button id="runBtn" onclick="runAnalysis()" style="display:none" aria-hidden="true"></button>
-    </div>
-
-    <!-- Sticky run button (shown when file list is collapsed / user scrolled past run btn) -->
-    <div class="sticky-run-wrap" id="stickyRunWrap">
-      <button class="sticky-run-btn" id="stickyRunBtn" onclick="runAnalysis()">▶ Run Analysis</button>
+      <div class="card" style="padding-top:0;border-top:none;">
+        <button class="run-btn" id="runBtn" onclick="runAnalysis()">&#9654; Run Analysis</button>
+      </div>
     </div>
 
     <!-- Error -->
@@ -3401,19 +3397,10 @@ function toggleFileList() {
 }
 
 function updateStickyBtn() {
-  const runBtn  = document.getElementById('runBtn');
-  const sticky  = document.getElementById('stickyRunWrap');
-  const stickyBtn = document.getElementById('stickyRunBtn');
-  if (!runBtn || !sticky) return;
-  const rect = runBtn.getBoundingClientRect();
-  const outOfView = rect.bottom < 0 || rect.top > window.innerHeight;
-  // Show sticky if file list collapsed OR run button scrolled out of view
-  sticky.classList.toggle('visible', fileListCollapsed || outOfView);
-  if (stickyBtn) stickyBtn.disabled = runBtn.disabled;
+  // no-op: sticky removed, run button is inline in config card
 }
 
-// Watch scroll to show/hide sticky run button
-window.addEventListener('scroll', updateStickyBtn, { passive: true });
+// scroll listener removed — sticky btn no longer used
 
 function renderFiles() {
   const fl = document.getElementById('fileList'); fl.innerHTML = '';
