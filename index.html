@@ -2474,7 +2474,7 @@ input[type=range]:active { cursor: grabbing; }
   <!-- Hero -->
   <div class="hero">
     <div class="hero-main">
-      <div class="hero-label">Open Research Tool · v2.0</div>
+      <div class="hero-label">Open Research Tool</div>
       <h1>Uncover<br/><em>Hidden Structure</em><br/>in Text Corpora</h1>
       <p class="hero-sub">Upload documents and apply state-of-the-art NLP methods — real BERTopic with BERT embeddings, Latent Dirichlet Allocation, TF-IDF term weighting, and transformer-based sentiment analysis — in seconds.</p>
     </div>
@@ -2696,9 +2696,8 @@ input[type=range]:active { cursor: grabbing; }
         </div>
       </div>
 
-      <div class="card" style="padding-top:0;border-top:none;">
-        <button class="run-btn" id="runBtn" onclick="runAnalysis()">▶ Run Analysis</button>
-      </div>
+      <!-- hidden runBtn kept for JS refs -->
+      <button id="runBtn" onclick="runAnalysis()" style="display:none" aria-hidden="true"></button>
     </div>
 
     <!-- Sticky run button (shown when file list is collapsed / user scrolled past run btn) -->
@@ -3170,7 +3169,7 @@ input[type=range]:active { cursor: grabbing; }
   <!-- Footer -->
   <div class="footer">
     <div class="footer-left">
-      <div class="footer-copy">TopicMiner NLP Platform · Open Research Tool · v2.0</div>
+      <div class="footer-copy">TopicMiner NLP Platform · Open Research Tool</div>
       <div class="footer-author">
         Built by <span class="footer-name">Charalampos Mentsios</span>
         <a class="footer-linkedin" href="https://www.linkedin.com/in/charalampos-mentsios" target="_blank" rel="noopener">
