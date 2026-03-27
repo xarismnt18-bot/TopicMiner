@@ -5,160 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>TopicMiner — NLP Text Analysis Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
-// ── AI Evaluation Chat ─────────────────────────────────────────────────────
-const AI_EVAL_METHODS = new Set(["lda", "bertopic", "sentiment"]);
-let aiEvalHistory = [];
-let aiEvalOpen    = false;
-let aiEvalStarted = false;
-
-function buildResultsSummary() {
-  if (!lastResultData) return "";
-  const { method, data } = lastResultData;
-  let s = "Method: " + method.toUpperCase() + "\n";
-  if (method === "lda" || method === "bertopic") {
-    s += "Documents: " + data.num_docs + " | Topics: " + data.num_topics;
-    if (data.vocab_size) s += " | Vocab: " + data.vocab_size;
-    s += "\n\n";
-    data.topics.forEach(function(t) {
-      s += "Topic " + t.topic_id + " (" + t.count + " docs): " + t.words.map(function(w){return w.word;}).join(", ") + "\n";
-    });
-  } else if (method === "sentiment") {
-    const sum = data.summary;
-    s += "Sentences: " + sum.total_sentences + " | Model: " + sum.model_used + "\n";
-    s += "Positive: " + sum.positive_pct + "% | Neutral: " + sum.neutral_pct + "% | Negative: " + sum.negative_pct + "%\n";
-    s += "Avg compound: " + sum.avg_compound + "\n\nSample sentences:\n";
-    data.sentences.slice(0, 20).forEach(function(r) {
-      s += "[" + r.label.toUpperCase() + "] " + r.compound.toFixed(3) + " — " + r.sentence + "\n";
-    });
-  }
-  return s;
-}
-
-function buildSystemPrompt() {
-  if (!lastResultData) return "";
-  const method = lastResultData.method;
-  const methodLabel = method === "sentiment" ? "Sentiment Analysis" : method.toUpperCase() + " topic modeling";
-  return "You are an expert NLP analyst embedded in TopicMiner, a research-grade text analysis platform. The user has just run " + methodLabel + " on their corpus and you are helping them interpret and evaluate the results. Be concise, direct, and academically rigorous. Reference specific topics or scores from the results where relevant. When suggesting improvements (stopwords, parameter tuning, etc.) be specific. Keep responses under 250 words unless the question requires more depth. Do not use markdown headers — write in clean flowing prose.";
-}
-
-function addEvalMessage(role, text, isThinking) {
-  const msgs = document.getElementById("aiEvalMessages");
-  const wrap = document.createElement("div");
-  wrap.className = "eval-msg";
-  const label = document.createElement("div");
-  label.className = "eval-msg-label " + role;
-  label.textContent = role === "assistant" ? "✦ Claude" : "You";
-  const body = document.createElement("div");
-  body.className = "eval-msg-body " + (isThinking ? "thinking" : role);
-  body.textContent = isThinking ? "Analysing results" : text;
-  wrap.appendChild(label);
-  wrap.appendChild(body);
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-  return body;
-}
-
-async function runAiEval(userMessage) {
-  const sendBtn = document.getElementById("aiEvalSend");
-  const input   = document.getElementById("aiEvalInput");
-  sendBtn.disabled = true;
-  input.disabled   = true;
-  if (userMessage) {
-    aiEvalHistory.push({ role: "user", content: userMessage });
-    addEvalMessage("user", userMessage, false);
-  }
-  const thinkingEl = addEvalMessage("assistant", "", true);
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system: buildSystemPrompt(),
-        messages: aiEvalHistory
-      })
-    });
-    const d = await response.json();
-    const reply = (d.content && d.content[0] && d.content[0].text) ? d.content[0].text : "No response received.";
-    thinkingEl.className   = "eval-msg-body assistant";
-    thinkingEl.textContent = reply;
-    aiEvalHistory.push({ role: "assistant", content: reply });
-    document.getElementById("aiEvalMessages").scrollTop = 999999;
-  } catch(err) {
-    thinkingEl.className   = "eval-msg-body assistant";
-    thinkingEl.textContent = "Error reaching Claude API: " + err.message;
-  } finally {
-    sendBtn.disabled = false;
-    input.disabled   = false;
-    input.focus();
-  }
-}
-
-function toggleAiEval() {
-  const panel = document.getElementById("aiEvalPanel");
-  const btn   = document.getElementById("aiEvalBtn");
-  aiEvalOpen  = !aiEvalOpen;
-  panel.classList.toggle("open", aiEvalOpen);
-  btn.classList.toggle("active", aiEvalOpen);
-  if (aiEvalOpen) {
-    setTimeout(function(){ panel.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 100);
-    if (!aiEvalStarted && lastResultData) {
-      aiEvalStarted = true;
-      aiEvalHistory = [{ role: "user", content: "Please evaluate these NLP analysis results and give me an opening assessment:\n\n" + buildResultsSummary() }];
-      runAiEval(null);
-    }
-  }
-}
-
-function sendAiEvalMsg() {
-  const input = document.getElementById("aiEvalInput");
-  const msg   = input.value.trim();
-  if (!msg) return;
-  input.value = "";
-  input.style.height = "";
-  if (aiEvalHistory.length === 0) {
-    aiEvalHistory = [
-      { role: "user",      content: "Here are the NLP analysis results for context:\n\n" + buildResultsSummary() },
-      { role: "assistant", content: "Ready to help." }
-    ];
-  }
-  aiEvalHistory.push({ role: "user", content: msg });
-  runAiEval(msg);
-}
-
-function updateAiEvalVisibility() {
-  const btn = document.getElementById("aiEvalBtn");
-  if (btn) btn.style.display = AI_EVAL_METHODS.has(activeMethod) ? "" : "none";
-}
-
-// Patch renderers to reset eval state on new results
-["lda", "bertopic", "sentiment"].forEach(function(m) {
-  const prev = renderers[m];
-  renderers[m] = function(data) {
-    aiEvalHistory = []; aiEvalStarted = false; aiEvalOpen = false;
-    const panel = document.getElementById("aiEvalPanel");
-    const btn   = document.getElementById("aiEvalBtn");
-    if (panel) { panel.classList.remove("open"); document.getElementById("aiEvalMessages").innerHTML = ""; }
-    if (btn)   { btn.classList.remove("active"); btn.style.display = ""; }
-    prev(data);
-  };
-});
-
-// Hook method card clicks to update button visibility
-document.querySelectorAll(".method-card").forEach(function(card) {
-  card.addEventListener("click", updateAiEvalVisibility);
-});
-updateAiEvalVisibility();
-
-// Auto-resize textarea
-document.getElementById("aiEvalInput").addEventListener("input", function() {
-  this.style.height = "auto";
-  this.style.height = Math.min(this.scrollHeight, 100) + "px";
-});
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root {
   --bg: #0d1117;
@@ -2359,7 +2206,7 @@ input[type=range]:active { cursor: grabbing; }
 .eval-msg-body.assistant { border-left-color: var(--accent); color: var(--ink); }
 .eval-msg-body.user { border-left-color: var(--muted); background: transparent; font-style: italic; color: var(--ink2); }
 .eval-msg-body.thinking { border-left-color: var(--gold); color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
-.eval-msg-body.thinking::after { content:'▋'; animation: cursorBlink .7s step-end infinite; }
+.eval-msg-body.thinking::after { content:'\25ae'; animation: cursorBlink .7s step-end infinite; }
 @keyframes cursorBlink { 50%{opacity:0;} }
 .ai-eval-input-row { display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--rule); background: var(--bg); }
 .ai-eval-input {
@@ -2381,7 +2228,6 @@ input[type=range]:active { cursor: grabbing; }
 .ai-eval-send:disabled { opacity:.4; cursor:not-allowed; }
 .toolbar-btn.ai-btn { border-color: rgba(88,166,255,0.35); color: var(--accent); background: rgba(88,166,255,0.05); }
 .toolbar-btn.ai-btn:hover, .toolbar-btn.ai-btn.active { border-color: var(--accent); background: rgba(88,166,255,0.12); color: var(--accent); }
-
 </style>
 </head>
 <body>
@@ -2719,7 +2565,7 @@ input[type=range]:active { cursor: grabbing; }
         </div>
         <button class="toolbar-btn" onclick="copyAllResults(this)">⧉ Copy All Results</button>
         <button class="toolbar-btn" onclick="copyResultsJSON(this)">{ } Copy JSON</button>
-        <button class="toolbar-btn ai-btn" id="aiEvalBtn" style="display:none" onclick="toggleAiEval()">✦ Discuss Results</button>
+        <button class="toolbar-btn ai-btn" id="aiEvalBtn" style="display:none" onclick="toggleAiEval()">&#10022; Discuss Results</button>
       </div>
       <div class="tabs">
         <button class="tab active" onclick="switchTab('summary',this)">Summary</button>
@@ -2735,23 +2581,22 @@ input[type=range]:active { cursor: grabbing; }
   <div class="ai-eval-panel" id="aiEvalPanel">
     <div class="ai-eval-header">
       <div class="ai-eval-header-left">
-        <span style="font-size:15px;line-height:1">✦</span>
+        <span style="font-size:15px;line-height:1">&#10022;</span>
         <span class="ai-eval-title">AI Results Evaluation</span>
-        <span class="ai-eval-model">Claude · context-aware</span>
+        <span class="ai-eval-model">Claude &middot; context-aware</span>
       </div>
-      <button class="ai-eval-close" onclick="toggleAiEval()">✕ Close</button>
+      <button class="ai-eval-close" onclick="toggleAiEval()">&#10005; Close</button>
     </div>
     <div class="ai-eval-messages" id="aiEvalMessages"></div>
     <div class="ai-eval-input-row">
       <textarea class="ai-eval-input" id="aiEvalInput"
-        placeholder="Ask a follow-up question about the results…" rows="1"
+        placeholder="Ask a follow-up question about the results&hellip;" rows="1"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiEvalMsg();}"></textarea>
-      <button class="ai-eval-send" id="aiEvalSend" onclick="sendAiEvalMsg()">Send ↵</button>
+      <button class="ai-eval-send" id="aiEvalSend" onclick="sendAiEvalMsg()">Send &#8629;</button>
     </div>
   </div>
 
-
-  <!-- How To Use -->
+    <!-- How To Use -->
   <div class="howto-section">
     <div class="section-head">
       <h2>How to Use TopicMiner</h2>
@@ -4586,6 +4431,175 @@ function copyTopicWords(topicId, words) {
     showToast(`✓ Topic ${topicId} words copied`);
   });
 }
+
+
+// ── AI Evaluation Chat ─────────────────────────────────────────────────────
+const AI_EVAL_METHODS = new Set(["lda", "bertopic", "sentiment"]);
+let aiEvalHistory = [];
+let aiEvalOpen    = false;
+let aiEvalStarted = false;
+
+function buildResultsSummary() {
+  if (!lastResultData) return "";
+  const { method, data } = lastResultData;
+  let s = "Method: " + method.toUpperCase() + "\n";
+  if (method === "lda" || method === "bertopic") {
+    s += "Documents: " + data.num_docs + " | Topics: " + data.num_topics;
+    if (data.vocab_size) s += " | Vocab: " + data.vocab_size;
+    s += "\n\n";
+    data.topics.forEach(function(t) {
+      s += "Topic " + t.topic_id + " (" + t.count + " docs): " + t.words.map(function(w){return w.word;}).join(", ") + "\n";
+    });
+  } else if (method === "sentiment") {
+    const sum = data.summary;
+    s += "Sentences: " + sum.total_sentences + " | Model: " + sum.model_used + "\n";
+    s += "Positive: " + sum.positive_pct + "% | Neutral: " + sum.neutral_pct + "% | Negative: " + sum.negative_pct + "%\n";
+    s += "Avg compound: " + sum.avg_compound + "\n\nSample sentences:\n";
+    data.sentences.slice(0, 20).forEach(function(r) {
+      s += "[" + r.label.toUpperCase() + "] " + r.compound.toFixed(3) + " - " + r.sentence + "\n";
+    });
+  }
+  return s;
+}
+
+function buildSystemPrompt() {
+  if (!lastResultData) return "";
+  const method = lastResultData.method;
+  const methodLabel = method === "sentiment" ? "Sentiment Analysis" : method.toUpperCase() + " topic modeling";
+  return "You are an expert NLP analyst embedded in TopicMiner, a research-grade text analysis platform. The user has just run " + methodLabel + " on their corpus and you are helping them interpret and evaluate the results. Be concise, direct, and academically rigorous. Reference specific topics or scores from the results where relevant. When suggesting improvements (stopwords, parameter tuning, etc.) be specific. Keep responses under 250 words unless the question requires more depth. Do not use markdown headers - write in clean flowing prose.";
+}
+
+function addEvalMessage(role, text, isThinking) {
+  const msgs = document.getElementById("aiEvalMessages");
+  const wrap = document.createElement("div");
+  wrap.className = "eval-msg";
+  const label = document.createElement("div");
+  label.className = "eval-msg-label " + role;
+  label.textContent = role === "assistant" ? "Claude" : "You";
+  const body = document.createElement("div");
+  body.className = "eval-msg-body " + (isThinking ? "thinking" : role);
+  body.textContent = isThinking ? "Analysing results" : text;
+  wrap.appendChild(label);
+  wrap.appendChild(body);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+  return body;
+}
+
+async function runAiEval(userMessage) {
+  const sendBtn = document.getElementById("aiEvalSend");
+  const input   = document.getElementById("aiEvalInput");
+  sendBtn.disabled = true;
+  input.disabled   = true;
+  if (userMessage) {
+    addEvalMessage("user", userMessage, false);
+  }
+  const thinkingEl = addEvalMessage("assistant", "", true);
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
+        messages: aiEvalHistory
+      })
+    });
+    const d = await response.json();
+    const reply = (d.content && d.content[0] && d.content[0].text) ? d.content[0].text : "No response received.";
+    thinkingEl.className   = "eval-msg-body assistant";
+    thinkingEl.textContent = reply;
+    aiEvalHistory.push({ role: "assistant", content: reply });
+    document.getElementById("aiEvalMessages").scrollTop = 999999;
+  } catch(err) {
+    thinkingEl.className   = "eval-msg-body assistant";
+    thinkingEl.textContent = "Error reaching Claude API: " + err.message;
+  } finally {
+    sendBtn.disabled = false;
+    input.disabled   = false;
+    input.focus();
+  }
+}
+
+function toggleAiEval() {
+  const panel = document.getElementById("aiEvalPanel");
+  const btn   = document.getElementById("aiEvalBtn");
+  aiEvalOpen  = !aiEvalOpen;
+  panel.classList.toggle("open", aiEvalOpen);
+  if (btn) btn.classList.toggle("active", aiEvalOpen);
+  if (aiEvalOpen) {
+    setTimeout(function(){ panel.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 100);
+    if (!aiEvalStarted && lastResultData) {
+      aiEvalStarted = true;
+      aiEvalHistory = [{ role: "user", content: "Please evaluate these NLP analysis results and give me an opening assessment:\n\n" + buildResultsSummary() }];
+      runAiEval(null);
+    }
+  }
+}
+
+function sendAiEvalMsg() {
+  const input = document.getElementById("aiEvalInput");
+  const msg   = input.value.trim();
+  if (!msg) return;
+  input.value = "";
+  input.style.height = "";
+  if (aiEvalHistory.length === 0) {
+    aiEvalHistory = [
+      { role: "user",      content: "Here are the NLP analysis results for context:\n\n" + buildResultsSummary() },
+      { role: "assistant", content: "Ready to help." }
+    ];
+  }
+  aiEvalHistory.push({ role: "user", content: msg });
+  runAiEval(msg);
+}
+
+function showAiEvalBtn() {
+  const btn = document.getElementById("aiEvalBtn");
+  if (btn) btn.style.display = "";
+}
+
+function hideAiEvalBtn() {
+  const btn = document.getElementById("aiEvalBtn");
+  if (btn) btn.style.display = "none";
+}
+
+// Hook method card clicks — show/hide button based on method
+document.querySelectorAll(".method-card").forEach(function(card) {
+  card.addEventListener("click", function() {
+    const m = card.dataset.method;
+    if (AI_EVAL_METHODS.has(m)) { showAiEvalBtn(); } else { hideAiEvalBtn(); }
+  });
+});
+
+// Patch _origRenderers AFTER they are defined — done via a small post-load hook
+// We use a MutationObserver-free approach: wrap at the end of script execution
+// when _origRenderers is already populated.
+(function patchAiEvalRenderers() {
+  ["lda", "bertopic", "sentiment"].forEach(function(m) {
+    if (!renderers[m]) return;
+    const prev = renderers[m];
+    renderers[m] = function(data) {
+      // Reset eval state for fresh results
+      aiEvalHistory = [];
+      aiEvalStarted = false;
+      aiEvalOpen    = false;
+      const panel = document.getElementById("aiEvalPanel");
+      const msgs  = document.getElementById("aiEvalMessages");
+      const btn   = document.getElementById("aiEvalBtn");
+      if (panel) panel.classList.remove("open");
+      if (msgs)  msgs.innerHTML = "";
+      if (btn)   { btn.classList.remove("active"); btn.style.display = ""; }
+      prev(data);
+    };
+  });
+})();
+
+// Auto-resize textarea
+document.getElementById("aiEvalInput").addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = Math.min(this.scrollHeight, 100) + "px";
+});
 
 </script>
 <div class="toast" id="toast"></div>
