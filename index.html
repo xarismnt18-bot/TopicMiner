@@ -4226,13 +4226,9 @@ async function runCoherence(){
   if(!uploadedFiles.length){showError('Please upload a file first.');return;}
   hideError();
 
-  // Warn if using Render — coherence needs gensim which may not be installed
-  const url = getApiUrl();
-  const isRender = url.includes('onrender.com');
-
   const btn=document.getElementById('cohBtn');
   btn.disabled=true;
-  btn.textContent = isRender ? '⏳ Calculating (may take 2-3 min on Render)...' : '⏳ Calculating...';
+  btn.textContent='⏳ Calculating (may take 2-3 min)...';
   const minT=parseInt(document.getElementById('cohMin').value);
   const maxT=parseInt(document.getElementById('cohMax').value);
   const fd=new FormData();
@@ -4268,9 +4264,6 @@ async function runCoherence(){
     if(!res.ok){
       const e=await res.json().catch(()=>({}));
       const msg = e.detail || 'Server error ' + res.status;
-      if(msg.includes('gensim') || msg.includes('ModuleNotFound')) {
-        throw new Error('Coherence requires gensim. Add gensim to requirements.txt on Render, or use the Colab backend.');
-      }
       throw new Error(msg);
     }
     const data=await res.json();
