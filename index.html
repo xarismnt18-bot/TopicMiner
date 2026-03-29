@@ -4251,14 +4251,23 @@ async function runCoherence(){
   fd.append('ngram_min',ng[0]); fd.append('ngram_max',ng[1]);
   fd.append('custom_stopwords',document.getElementById('ldaCustomStop').value);
   try{
-    const res=await fetch(`${getApiUrl()}/analyze/coherence`,{
+    // Wake up Render before sending large request (free tier cold start)
+    btn.textContent='Waking up backend…';
+    try {
+      await fetch(PRESET_URLS.render + '/health', {
+        signal: AbortSignal.timeout(35000),
+        headers: {'ngrok-skip-browser-warning':'true'}
+      });
+    } catch(e) { /* ignore, proceed anyway */ }
+    btn.textContent='Running coherence analysis…';
+    const res=await fetch(PRESET_URLS.render + '/analyze/coherence',{
       method:'POST', body:fd,
       headers:{'ngrok-skip-browser-warning':'true'},
-      signal: AbortSignal.timeout(300000)  // 5 min timeout for coherence
+      signal: AbortSignal.timeout(600000)  // 10 min timeout for coherence
     });
     if(!res.ok){
       const e=await res.json().catch(()=>({}));
-      const msg = e.detail || 'Error';
+      const msg = e.detail || 'Server error ' + res.status;
       if(msg.includes('gensim') || msg.includes('ModuleNotFound')) {
         throw new Error('Coherence requires gensim. Add gensim to requirements.txt on Render, or use the Colab backend.');
       }
