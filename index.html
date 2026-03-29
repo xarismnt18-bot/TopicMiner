@@ -3678,7 +3678,7 @@ const PRESET_URLS = {
 };
 
 // Methods that need Colab/GPU
-const COLAB_METHODS = new Set(['bertopic', 'tfidf']);
+const COLAB_METHODS = new Set(['bertopic']);
 function needsColab(method) {
   if (COLAB_METHODS.has(method)) return true;
   if (method === 'sentiment') {
@@ -4744,7 +4744,7 @@ async function runAiEval(userMessage) {
   }
   const thinkingEl = addEvalMessage("assistant", "", true);
   try {
-    const response = await fetch(getApiUrl() + "/ai/evaluate", {
+    const response = await fetch(PRESET_URLS.render + "/ai/evaluate", {
       method: "POST",
       headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
       body: JSON.stringify({
@@ -4879,7 +4879,7 @@ async function renderCorpusSummary(data, method) {
   }
 
   try {
-    const res = await fetch(getApiUrl() + '/ai/evaluate', {
+    const res = await fetch(PRESET_URLS.render + '/ai/evaluate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
       body: JSON.stringify({
@@ -4930,7 +4930,7 @@ async function renderStopwordSuggestions(data, method) {
   });
 
   try {
-    const res = await fetch(getApiUrl() + '/ai/evaluate', {
+    const res = await fetch(PRESET_URLS.render + '/ai/evaluate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
       body: JSON.stringify({
