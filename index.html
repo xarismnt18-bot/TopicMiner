@@ -3748,7 +3748,7 @@ async function pingApi() {
   for (let i = 0; i < maxTries; i++) {
     try {
       const res = await fetch(url + '/health', {
-        signal: AbortSignal.timeout(isRender ? 30000 : 12000),
+        signal: AbortSignal.timeout(isRender ? 30000 : 30000),
         headers: { 'ngrok-skip-browser-warning': 'true', 'Accept': 'application/json' }
       });
       if (res.ok) {
@@ -4165,7 +4165,7 @@ async function runAnalysis(){
     if(activeMethod==='tfidf'&&document.getElementById('tfidfDistinct')&&document.getElementById('tfidfDistinct').classList.contains('on')) endpoint='tfidf_perdoc';
     if(activeMethod==='wordfreq') endpoint='lda';
     const formData=buildForm();
-    const res=await fetch(`${getApiUrl()}/analyze/${endpoint}`,{method:'POST',body:formData,headers:{'ngrok-skip-browser-warning':'true'}});
+    const res=await fetch(`${getApiUrl()}/analyze/${endpoint}`,{method:'POST',body:formData,headers:{'ngrok-skip-browser-warning':'true'},signal:AbortSignal.timeout(900000)});
     stopProgress();
     if(!res.ok){
       const err=await res.json().catch(()=>({detail:'Unknown error'}));
