@@ -1452,7 +1452,29 @@ select:focus { border-color: var(--ink); }
   display: flex;
   gap: 14px;
   align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s, background .2s, transform .15s;
+  position: relative;
 }
+a.ref-item { cursor: pointer; }
+a.ref-item:hover {
+  border-color: rgba(88,166,255,0.45);
+  background: rgba(88,166,255,0.06);
+  transform: translateY(-1px);
+}
+a.ref-item:hover .ref-title { color: var(--accent); }
+a.ref-item::after {
+  content: '↗';
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity .2s;
+  font-family: var(--font-mono);
+}
+a.ref-item:hover::after { opacity: 1; color: var(--accent); }
 
 .ref-num {
   font-family: var(--font-display);
@@ -2839,76 +2861,90 @@ input[type=range]:active { cursor: grabbing; }
     <div class="collapsible-body" id="refsBody">
     <div style="height:20px"></div>
     <div class="refs-grid">
-      <div class="ref-item">
+      <a class="ref-item" href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf" target="_blank" rel="noopener">
         <div class="ref-num">1</div>
         <div class="ref-body">
           <div class="ref-title">Latent Dirichlet Allocation</div>
           <div class="ref-authors">Blei, D.M., Ng, A.Y., &amp; Jordan, M.I. (2003). <em>Journal of Machine Learning Research</em>, 3, 993–1022.</div>
         </div>
-      </div>
-      <div class="ref-item">
+      </a>
+      <a class="ref-item" href="https://arxiv.org/abs/2203.05794" target="_blank" rel="noopener">
         <div class="ref-num">2</div>
         <div class="ref-body">
-          <div class="ref-title">BERTopic: Leveraging BERT and c-TF-IDF</div>
+          <div class="ref-title">BERTopic: Neural Topic Modeling with c-TF-IDF</div>
           <div class="ref-authors">Grootendorst, M. (2022). <em>arXiv preprint</em> arXiv:2203.05794.</div>
         </div>
-      </div>
-      <div class="ref-item">
+      </a>
+      <a class="ref-item" href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">
         <div class="ref-num">3</div>
         <div class="ref-body">
           <div class="ref-title">BERT: Pre-training of Deep Bidirectional Transformers</div>
           <div class="ref-authors">Devlin, J., Chang, M.W., Lee, K., &amp; Toutanova, K. (2019). <em>NAACL-HLT 2019</em>, 4171–4186.</div>
         </div>
-      </div>
-      <div class="ref-item">
+      </a>
+      <a class="ref-item" href="https://ojs.aaai.org/index.php/ICWSM/article/view/14550" target="_blank" rel="noopener">
         <div class="ref-num">4</div>
         <div class="ref-body">
           <div class="ref-title">VADER: A Parsimonious Rule-based Model for Sentiment Analysis</div>
           <div class="ref-authors">Hutto, C.J., &amp; Gilbert, E. (2014). <em>ICWSM 2014</em>, 8(1), 216–225.</div>
         </div>
-      </div>
-      <div class="ref-item">
+      </a>
+      <a class="ref-item" href="https://arxiv.org/abs/1907.11692" target="_blank" rel="noopener">
         <div class="ref-num">5</div>
+        <div class="ref-body">
+          <div class="ref-title">RoBERTa: A Robustly Optimized BERT Pretraining Approach</div>
+          <div class="ref-authors">Liu, Y., Ott, M., Goyal, N., et al. (2019). <em>arXiv preprint</em> arXiv:1907.11692.</div>
+        </div>
+      </a>
+      <a class="ref-item" href="https://aclanthology.org/2020.findings-emnlp.148/" target="_blank" rel="noopener">
+        <div class="ref-num">6</div>
+        <div class="ref-body">
+          <div class="ref-title">TweetEval: Unified Benchmark for Tweet Classification</div>
+          <div class="ref-authors">Barbieri, F., Camacho-Collados, J., Espinosa-Anke, L., &amp; Neves, L. (2020). <em>EMNLP Findings 2020</em>. [cardiffnlp/twitter-roberta-base-sentiment]</div>
+        </div>
+      </a>
+      <a class="ref-item" href="https://dl.acm.org/doi/10.1145/2684822.2685324" target="_blank" rel="noopener">
+        <div class="ref-num">7</div>
+        <div class="ref-body">
+          <div class="ref-title">Exploring the Space of Topic Coherence Measures (C_V metric)</div>
+          <div class="ref-authors">Röder, M., Both, A., &amp; Hinneburg, A. (2015). <em>WSDM 2015</em>, 399–408.</div>
+        </div>
+      </a>
+      <a class="ref-item" href="https://aclanthology.org/D11-1024/" target="_blank" rel="noopener">
+        <div class="ref-num">8</div>
         <div class="ref-body">
           <div class="ref-title">Optimizing Semantic Coherence in Topic Models</div>
           <div class="ref-authors">Mimno, D., Wallach, H., Talley, E., Leenders, M., &amp; McCallum, A. (2011). <em>EMNLP 2011</em>, 262–272.</div>
         </div>
-      </div>
-      <div class="ref-item">
-        <div class="ref-num">6</div>
-        <div class="ref-body">
-          <div class="ref-title">Reading Tea Leaves: How Humans Interpret Topic Models</div>
-          <div class="ref-authors">Chang, J., Gerrish, S., Wang, C., Boyd-Graber, J., &amp; Blei, D. (2009). <em>NeurIPS 2009</em>, 22.</div>
-        </div>
-      </div>
-      <div class="ref-item">
-        <div class="ref-num">7</div>
-        <div class="ref-body">
-          <div class="ref-title">A Framework for Topic Coherence Evaluation</div>
-          <div class="ref-authors">Röder, M., Both, A., &amp; Hinneburg, A. (2015). <em>WSDM 2015</em>, 399–408. [C_V metric]</div>
-        </div>
-      </div>
-      <div class="ref-item">
-        <div class="ref-num">8</div>
-        <div class="ref-body">
-          <div class="ref-title">RoBERTa: A Robustly Optimized BERT Pretraining Approach</div>
-          <div class="ref-authors">Liu, Y., Ott, M., Goyal, N., Du, J., Joshi, M., Chen, D., Levy, O., Lewis, M., Zettlemoyer, L., &amp; Stoyanov, V. (2019). <em>arXiv preprint</em> arXiv:1907.11692.</div>
-        </div>
-      </div>
-      <div class="ref-item">
+      </a>
+      <a class="ref-item" href="https://arxiv.org/abs/1802.03426" target="_blank" rel="noopener">
         <div class="ref-num">9</div>
         <div class="ref-body">
-          <div class="ref-title">TweetEval: Unified Benchmark for Tweet Classification (RoBERTa sentiment model)</div>
-          <div class="ref-authors">Barbieri, F., Camacho-Collados, J., Espinosa-Anke, L., &amp; Neves, L. (2020). <em>EMNLP Findings 2020</em>. [cardiffnlp/twitter-roberta-base-sentiment]</div>
+          <div class="ref-title">UMAP: Uniform Manifold Approximation and Projection</div>
+          <div class="ref-authors">McInnes, L., Healy, J., &amp; Melville, J. (2018). <em>arXiv preprint</em> arXiv:1802.03426. [Used in BERTopic dimensionality reduction]</div>
         </div>
-      </div>
-      <div class="ref-item">
+      </a>
+      <a class="ref-item" href="https://arxiv.org/abs/1911.02282" target="_blank" rel="noopener">
         <div class="ref-num">10</div>
         <div class="ref-body">
-          <div class="ref-title">A Survey of Text Classification Algorithms</div>
-          <div class="ref-authors">Aggarwal, C.C., &amp; Zhai, C. (2012). <em>Mining Text Data</em>, Springer, 163–222.</div>
+          <div class="ref-title">HDBSCAN: Hierarchical Density-Based Clustering</div>
+          <div class="ref-authors">McInnes, L., Healy, J., &amp; Astels, S. (2017). <em>Journal of Open Source Software</em>, 2(11), 205. [Used in BERTopic clustering]</div>
         </div>
-      </div>
+      </a>
+      <a class="ref-item" href="https://doi.org/10.1007/s10791-024-09496-9" target="_blank" rel="noopener">
+        <div class="ref-num">11</div>
+        <div class="ref-body">
+          <div class="ref-title">Text Mining Technologies Applied to Free-Text Answers in e-Assessment</div>
+          <div class="ref-authors">Charitopoulos, A., Rangoussi, M., Metafas, D., &amp; Koulouriotis, D. (2025). <em>Discover Computing</em>, 28, 5.</div>
+        </div>
+      </a>
+      <a class="ref-item" href="https://arxiv.org/abs/2301.03728" target="_blank" rel="noopener">
+        <div class="ref-num">12</div>
+        <div class="ref-body">
+          <div class="ref-title">Uncovering the Structure of Amazon Product Reviews</div>
+          <div class="ref-authors">Hou, Y., Li, J., He, Z., Yan, A., Chen, X., &amp; McAuley, J. (2024). <em>ACL 2024</em>. [Amazon Movies &amp; TV dataset]</div>
+        </div>
+      </a>
     </div>
     </div><!-- end collapsible-body -->
   </div>
@@ -4226,9 +4262,13 @@ async function runCoherence(){
   if(!uploadedFiles.length){showError('Please upload a file first.');return;}
   hideError();
 
+  // Warn if using Render — coherence needs gensim which may not be installed
+  const url = getApiUrl();
+  const isRender = url.includes('onrender.com');
+
   const btn=document.getElementById('cohBtn');
   btn.disabled=true;
-  btn.textContent='⏳ Calculating (may take 2-3 min)...';
+  btn.textContent = isRender ? '⏳ Calculating (may take 2-3 min on Render)...' : '⏳ Calculating...';
   const minT=parseInt(document.getElementById('cohMin').value);
   const maxT=parseInt(document.getElementById('cohMax').value);
   const fd=new FormData();
@@ -4264,6 +4304,9 @@ async function runCoherence(){
     if(!res.ok){
       const e=await res.json().catch(()=>({}));
       const msg = e.detail || 'Server error ' + res.status;
+      if(msg.includes('gensim') || msg.includes('ModuleNotFound')) {
+        throw new Error('Coherence requires gensim. Add gensim to requirements.txt on Render, or use the Colab backend.');
+      }
       throw new Error(msg);
     }
     const data=await res.json();
